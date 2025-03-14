@@ -8,6 +8,7 @@ import { getDebugInfo } from "@lib/api/debug";
 import { BundleUpdaterManager } from "@lib/api/native/modules";
 import { settings } from "@lib/api/settings";
 import { openAlert } from "@lib/ui/alerts";
+import { getAssetById } from "@lib/api/assets";
 import { DISCORD_SERVER, GITHUB } from "@lib/utils/constants";
 import { NavigationNative, url } from "@metro/common";
 import { AlertActionButton, AlertActions, AlertModal, Stack, TableRow, TableRowGroup, TableSwitchRow } from "@metro/common/components";

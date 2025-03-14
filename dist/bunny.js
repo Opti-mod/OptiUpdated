@@ -4229,6 +4229,7 @@
     filterAssets: () => filterAssets,
     findAsset: () => findAsset,
     findAssetId: () => findAssetId,
+    getAssetById: () => getAssetById,
     iterateAssets: () => iterateAssets
   });
   function* iterateAssets() {
@@ -4653,7 +4654,7 @@
       init_logger();
       init_toasts();
       import_react_native5 = __toESM(require_react_native());
-      versionHash = "63afc36-local";
+      versionHash = "44deef9-local";
     }
   });
 
@@ -15185,7 +15186,7 @@
             uri: pyoncord_default
           },
           render: () => Promise.resolve().then(() => (init_General(), General_exports)),
-          useTrailing: () => `(${"63afc36-local"})`
+          useTrailing: () => `(${"44deef9-local"})`
         },
         {
           key: "BUNNY_PLUGINS",
@@ -15682,7 +15683,7 @@
         alert([
           "Failed to load Opti!\n",
           `Build Number: ${ClientInfoManager.Build}`,
-          `Opti: ${"63afc36-local"}`,
+          `Opti: ${"44deef9-local"}`,
           stack || e?.toString?.()
         ].join("\n"));
       }

@@ -28,7 +28,7 @@ export function* iterateAssets() {
 }
 
 // Apply additional properties for convenience
-function getAssetById(id: number): Asset {
+export function getAssetById(id: number): Asset {
     const asset = assetsModule.getAssetByID(id);
     if (!asset) return asset;
     return Object.assign(asset, { id });
