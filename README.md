@@ -1,5 +1,5 @@
-# Bunny [![Discord](https://img.shields.io/discord/1196075698301968455?style=social&logo=discord&label=Pyoncord)](https://discord.gg/XjYgWXHb9Q)
-A mod for Discord's mobile apps, a fork of [Vendetta](https://github.com/vendetta-mod/Vendetta/).
+# Opti [![Discord](https://img.shields.io/discord/1196075698301968455?style=social&logo=discord&label=Pyoncord)](https://discord.gg/XjYgWXHb9Q)
+A mod for Discord's mobile apps, a fork of [Bunny](https://github.com/vendetta-mod/Vendetta/).
 
 ## Installing
 
@@ -10,6 +10,8 @@ A mod for Discord's mobile apps, a fork of [Vendetta](https://github.com/vendett
 
 ### iOS
 - [**BunnyTweak**](https://github.com/pyoncord/BunnyTweak) - Get prebuilt rootful and rootless `.deb` files or the prepatched `.ipa `
+
+- **Enmity Sideloading** - Sideload with the following URL:  
 
 ## Building
 1. Install a Bunny loader with loader config support (any mentioned in the [Installing](#installing) section).

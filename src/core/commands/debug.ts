@@ -16,11 +16,10 @@ export default () => <ApplicationCommand>{
     execute([ephemeral], ctx) {
         const info = getDebugInfo();
         const content = [
-            "**Bunny Debug Info**",
-            `> Bunny: ${info.bunny.version} (${info.bunny.loader.name} ${info.bunny.loader.version})`,
+            "**Opti Debug Info**",
+            `> Opti: ${info.bunny.version} (${info.bunny.loader.name} ${info.bunny.loader.version})`,
             `> Discord: ${info.discord.version} (${info.discord.build})`,
             `> React: ${info.react.version} (RN ${info.react.nativeVersion})`,
-            `> Hermes: ${info.hermes.version} (bcv${info.hermes.bytecodeVersion})`,
             `> System: ${info.os.name} ${info.os.version} ${info.os.sdk ? `(SDK ${info.os.sdk})` : ""}`.trimEnd(),
             `> Device: ${info.device.model} (${info.device.codename})`,
         ].join("\n");
