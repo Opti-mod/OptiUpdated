@@ -11,7 +11,7 @@ export { PyoncordIcon };
 
 export default function initSettings() {
     registerSection({
-        name: "Bunny",
+        name: "Opti",
         items: [
             {
                 key: "BUNNY",

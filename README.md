@@ -11,7 +11,7 @@ A mod for Discord's mobile apps, a fork of [Bunny](https://github.com/vendetta-m
 ### iOS
 - [**BunnyTweak**](https://github.com/pyoncord/BunnyTweak) - Get prebuilt rootful and rootless `.deb` files or the prepatched `.ipa `
 
-- **Enmity Sideloading** - Sideload with the following URL:  
+- **Enmity Sideloading** - Sideload with the following URL:  https://raw.githubusercontent.com/Opti-mod/OptiUpdated/refs/heads/main/dist/bunny.js 
 
 ## Building
 1. Install a Bunny loader with loader config support (any mentioned in the [Installing](#installing) section).
