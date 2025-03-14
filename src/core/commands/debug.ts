@@ -20,6 +20,7 @@ export default () => <ApplicationCommand>{
             `> Opti: ${info.bunny.version}`,
             `> Loader: ${info.bunny.loader.name} ${info.bunny.loader.version}`,
             `> Discord: ${info.discord.version} (${info.discord.build})`,
+            `-# Hermes: ${info.hermes.bytecodeVersion}  ${info.hermes.version}`,
             `-# React: ${info.react.version} (RN ${info.react.nativeVersion})`,
             `-# System: ${info.os.name} ${info.os.version} ${info.os.sdk ? `(SDK ${info.os.sdk})` : ""}`.trimEnd(),
             `-# Device: ${info.device.model} (${info.device.codename})`,
