@@ -1,5 +1,5 @@
-# Opti [![Discord](https://img.shields.io/discord/1196075698301968455?style=social&logo=discord&label=Pyoncord)](https://discord.gg/XjYgWXHb9Q)
-A mod for Discord's mobile apps, a fork of [Bunny](https://github.com/vendetta-mod/Vendetta/).
+# Opti
+An optimized Discord mobile experience. A fork of [Bunny](https://github.com/vendetta-mod/Vendetta/).
 
 ## Installing
 
@@ -14,17 +14,17 @@ A mod for Discord's mobile apps, a fork of [Bunny](https://github.com/vendetta-m
 - **Enmity Sideloading** - Sideload with the following URL:  https://raw.githubusercontent.com/Opti-mod/OptiUpdated/refs/heads/main/dist/bunny.js 
 
 ## Building
-1. Install a Bunny loader with loader config support (any mentioned in the [Installing](#installing) section).
+1. Install an Opti loader with loader config support (any mentioned in the [Installing](#installing) section).
 1. Go to Settings > General and enable Developer Settings.
 1. Clone the repo:
     ```
-    git clone https://github.com/pyoncord/Bunny
+    git clone https://github.com/Opti-mod/Opti
     ```
-1. Install dependencies:
+1. Install dependencies (if pnpm is not installed already, run ```npm i pnpm --global``` first.):
     ```
     pnpm i
     ```
-1. Build Bunny's code:
+1. Build Opti's code:
     ```
     pnpm build
     ```

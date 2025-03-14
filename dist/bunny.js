@@ -4305,8 +4305,8 @@
         ARE_YOU_SURE_TO_DELETE_THEME: "Are you sure you wish to delete {name}?",
         ASSET_BROWSER: "Asset Browser",
         BRAND: "Brand",
-        BUNNY: "Bunny",
-        BUNNY_URL: "Bunny URL",
+        BUNNY: "Opti",
+        BUNNY_URL: "Opti URL",
         BYTECODE: "Bytecode",
         CANCEL: "Cancel",
         CLEAR: "Clear",
@@ -4314,7 +4314,7 @@
         CLEAR_DATA_FAILED: "Failed to clear data for {name}!",
         CLEAR_DATA_SUCCESSFUL: "Cleared data for {name}.",
         CODENAME: "Codename",
-        COMMAND_DEBUG_DESC: "Send Bunny debug info.",
+        COMMAND_DEBUG_DESC: "Send Opti debug info.",
         COMMAND_DEBUG_OPT_EPHEMERALLY: "Send debug info ephemerally.",
         COMMAND_EVAL_DESC: "Evaluate JavaScript code.",
         COMMAND_EVAL_OPT_ASYNC: "Whether to support 'await' in code. Must explicitly return for result (default: false)",
@@ -4358,7 +4358,7 @@
         LABEL_EXTRACT_FONTS_FROM_THEME: "Extract font from theme",
         LINKS: "Links",
         LOAD_FROM_CUSTOM_URL: "Load from custom URL",
-        LOAD_FROM_CUSTOM_URL_DEC: "Load Bunny from a custom endpoint.",
+        LOAD_FROM_CUSTOM_URL_DEC: "Load Opti from a custom endpoint.",
         LOAD_REACT_DEVTOOLS: "Load React DevTools",
         LOADER: "Loader",
         MACHINE_ID: "Machine ID",
@@ -4434,7 +4434,7 @@
       }
       if (!_loadedLocale.has(resolvedLocale)) {
         _loadedLocale.add(resolvedLocale);
-        fetch(`https://raw.githubusercontent.com/pyoncord/i18n/main/resources/${resolvedLocale}/bunny.json`).then((r) => r.json()).then((strings) => _loadedStrings[resolvedLocale] = strings).then(() => resolvedLocale === _lastSetLocale && (_currentLocale = resolvedLocale)).catch((e) => console.error(`An error occured while fetching strings for ${resolvedLocale}: ${e}`));
+        fetch(`https://raw.githubusercontent.com/Opti-mod/i18n/main/resources/${resolvedLocale}/bunny.json`).then((r) => r.json()).then((strings) => _loadedStrings[resolvedLocale] = strings).then(() => resolvedLocale === _lastSetLocale && (_currentLocale = resolvedLocale)).catch((e) => console.error(`An error occured while fetching strings for ${resolvedLocale}: ${e}`));
       } else {
         _currentLocale = resolvedLocale;
       }
@@ -4653,7 +4653,7 @@
       init_logger();
       init_toasts();
       import_react_native5 = __toESM(require_react_native());
-      versionHash = "fcc913e-local";
+      versionHash = "63afc36-local";
     }
   });
 
@@ -8373,11 +8373,12 @@
           var info = getDebugInfo();
           var content = [
             "**Opti Debug Info**",
-            `> Opti: ${info.bunny.version} (${info.bunny.loader.name} ${info.bunny.loader.version})`,
+            `> Opti: ${info.bunny.version}`,
+            `> Loader: ${info.bunny.loader.name} ${info.bunny.loader.version}`,
             `> Discord: ${info.discord.version} (${info.discord.build})`,
-            `> React: ${info.react.version} (RN ${info.react.nativeVersion})`,
-            `> System: ${info.os.name} ${info.os.version} ${info.os.sdk ? `(SDK ${info.os.sdk})` : ""}`.trimEnd(),
-            `> Device: ${info.device.model} (${info.device.codename})`
+            `-# React: ${info.react.version} (RN ${info.react.nativeVersion})`,
+            `-# System: ${info.os.name} ${info.os.version} ${info.os.sdk ? `(SDK ${info.os.sdk})` : ""}`.trimEnd(),
+            `-# Device: ${info.device.model} (${info.device.codename})`
           ].join("\n");
           if (ephemeral?.value) {
             messageUtil.sendBotMessage(ctx.channel.id, content);
@@ -15175,7 +15176,7 @@
   // src/core/ui/settings/index.ts
   function initSettings() {
     registerSection({
-      name: "Bunny",
+      name: "Opti",
       items: [
         {
           key: "BUNNY",
@@ -15184,7 +15185,7 @@
             uri: pyoncord_default
           },
           render: () => Promise.resolve().then(() => (init_General(), General_exports)),
-          useTrailing: () => `(${"fcc913e-local"})`
+          useTrailing: () => `(${"63afc36-local"})`
         },
         {
           key: "BUNNY_PLUGINS",
@@ -15681,7 +15682,7 @@
         alert([
           "Failed to load Opti!\n",
           `Build Number: ${ClientInfoManager.Build}`,
-          `Opti: ${"fcc913e-local"}`,
+          `Opti: ${"63afc36-local"}`,
           stack || e?.toString?.()
         ].join("\n"));
       }

@@ -17,11 +17,12 @@ export default () => <ApplicationCommand>{
         const info = getDebugInfo();
         const content = [
             "**Opti Debug Info**",
-            `> Opti: ${info.bunny.version} (${info.bunny.loader.name} ${info.bunny.loader.version})`,
+            `> Opti: ${info.bunny.version}`,
+            `> Loader: ${info.bunny.loader.name} ${info.bunny.loader.version}`,
             `> Discord: ${info.discord.version} (${info.discord.build})`,
-            `> React: ${info.react.version} (RN ${info.react.nativeVersion})`,
-            `> System: ${info.os.name} ${info.os.version} ${info.os.sdk ? `(SDK ${info.os.sdk})` : ""}`.trimEnd(),
-            `> Device: ${info.device.model} (${info.device.codename})`,
+            `-# React: ${info.react.version} (RN ${info.react.nativeVersion})`,
+            `-# System: ${info.os.name} ${info.os.version} ${info.os.sdk ? `(SDK ${info.os.sdk})` : ""}`.trimEnd(),
+            `-# Device: ${info.device.model} (${info.device.codename})`,
         ].join("\n");
 
         if (ephemeral?.value) {
