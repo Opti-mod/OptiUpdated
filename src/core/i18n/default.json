@@ -78,7 +78,7 @@
     "PLATFORM": "Platform",
     "PLUGIN_REFETCH_FAILED": "Failed to refetch plugin!",
     "PLUGIN_REFETCH_SUCCESSFUL": "Successfully refetched plugin!",
-    "PLUGINS": "Plugins",
+    "PLUGINS": "Addons",
     "REFETCH": "Refetch",
     "RELOAD": "Reload",
     "RELOAD_DISCORD": "Reload Discord",

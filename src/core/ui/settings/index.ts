@@ -22,7 +22,7 @@ export default function initSettings() {
             },
             {
                 key: "BUNNY_PLUGINS",
-                title: () => `${Strings.PLUGINS} & ${Strings.THEMES}`,
+                title: () => `${Strings.PLUGINS}`,
                 icon: findAssetId("ActivitiesIcon"),
                 render: () => import("@core/ui/settings/pages/Plugins")
             },
