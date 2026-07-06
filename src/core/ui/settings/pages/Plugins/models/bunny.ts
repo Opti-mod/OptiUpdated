@@ -4,6 +4,8 @@ import { BunnyPluginManifest } from "@lib/addons/plugins/types";
 import { useObservable } from "@lib/api/storage";
 
 import { UnifiedPluginModel } from ".";
+import { showToast } from "@lib/ui/toasts";
+import { findAssetId } from "@lib/api/assets";
 
 export default function unifyBunnyPlugin(manifest: BunnyPluginManifest): UnifiedPluginModel {
     return {
@@ -30,7 +32,7 @@ export default function unifyBunnyPlugin(manifest: BunnyPluginManifest): Unified
                     : disablePlugin(manifest.id);
             } catch (e) {
                 console.error(e);
-                // showToast("Failed to toggle plugin " + e, findAssetId("Small"));
+                showToast("Failed to toggle plugin " + e, findAssetId("Small"));
             }
         },
         resolveSheetComponent() {

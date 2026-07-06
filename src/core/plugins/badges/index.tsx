@@ -1,61 +1,156 @@
 import { after } from "@lib/api/patcher";
 import { onJsxCreate } from "@lib/api/react/jsx";
-import { findByName } from "@metro";
+import { findByName, findByNameLazy } from "@metro";
 import { useEffect, useState } from "react";
-
 import { defineCorePlugin } from "..";
+import { FluxDispatcher } from "@metro/common";
 
-interface BunnyBadge {
+// credit kettu and @cocobo1 for the updated badge system
+
+interface Badge {
     label: string;
     url: string;
 }
 
-const useBadgesModule = findByName("useBadges", false);
+interface CustomBadge {
+    label: string;
+    url: string;
+}
+
+interface UserBadgeData {
+    roles?: string[];
+    custom?: CustomBadge[];
+}
+
+interface BadgeData {
+    [userId: string]: UserBadgeData;
+}
+
+interface RoleData {
+    label: string;
+    url: string;
+}
+
+interface RolesData {
+    [roleName: string]: RoleData;
+}
+
+const useBadgesModule = findByNameLazy("useBadges", false);
+
+const badgesCache = new Map<string, Badge[]>();
+const badgeProps = new Map<string, Record<string, any>>();
+const pendingRequests = new Set<string>();
 
 export default defineCorePlugin({
     manifest: {
         id: "bunny.badges",
-        name: "Opti Badges",
-        version: "1.0.0",
-        description: "Adds badges to user's profile",
-        authors: [{ name: "byeoon, pylix" }]
+        version: "1.1.0",
+        type: "plugin",
+        spec: 3,
+        main: "",
+        display: {
+            name: "Badges",
+            description: "Adds badges to user's profile",
+            authors: [{ name: "cocobo1" }, { name: "byeoon" }, { name: "pylixonly" }]
+        }
     },
-    start() {
-        const propHolder = {} as Record<string, any>;
-        const badgeCache = {} as Record<string, BunnyBadge[]>;
 
-        onJsxCreate("RenderedBadge", (_, ret) => {
-            if (ret.props.id.match(/opti-\d+-\d+/)) {
-                Object.assign(ret.props, propHolder[ret.props.id]);
+    start() {
+        onJsxCreate("ProfileBadge", (component, ret) => {
+            if (ret.props.id?.startsWith("opti-")) {
+                const cachedProps = badgeProps.get(ret.props.id);
+                if (cachedProps) {
+                    ret.props.source = cachedProps.source;
+                    ret.props.label = cachedProps.label;
+                    ret.props.id = cachedProps.id;
+                }
             }
         });
 
-        after("default", useBadgesModule, ([user], r) => {
-            const [badges, setBadges] = useState<BunnyBadge[]>(user ? badgeCache[user.userId] ??= [] : []);
-
-            useEffect(() => {
-                if (user) {
-                    fetch(`https://raw.githubusercontent.com/Opti-mod/badges/refs/heads/main/${user.userId}.json`)
-                        .then(r => r.json())
-                        .then(badges => setBadges(badgeCache[user.userId] = badges));
+        onJsxCreate("RenderedBadge", (component, ret) => {
+            if (ret.props.id?.startsWith("opti-")) {
+                const cachedProps = badgeProps.get(ret.props.id);
+                if (cachedProps) {
+                    Object.assign(ret.props, cachedProps);
                 }
-            }, [user]);
+            }
+        });
 
-            if (user) {
-                badges.forEach((badges, i) => {
-                    propHolder[`opti-${user.userId}-${i}`] = {
-                        source: { uri: badges.url },
-                        id: `opti-${i}`,
-                        label: badges.label
-                    };
+        const fetchAndProcessBadges = async (userId: string) => {
+            if (pendingRequests.has(userId)) return;
+            pendingRequests.add(userId);
 
-                    r.push({
-                        id: `opti-${user.userId}-${i}`,
-                        description: badges.label,
-                        icon: "_",
+            try {
+                const [badgesRes, rolesRes] = await Promise.all([
+                    fetch("https://raw.githubusercontent.com/Opti-mod/badges/refs/heads/main/badges.json"),
+                    fetch("https://raw.githubusercontent.com/Opti-mod/badges/refs/heads/main/roles.json"),
+                ]);
+
+                const badgesData: BadgeData = await badgesRes.json();
+                const rolesData: RolesData = await rolesRes.json();
+
+                const userBadgeData = badgesData[userId] || { roles: [], custom: [] };
+
+                const allBadges: Badge[] = [];
+
+                // process role badges
+                if (userBadgeData.roles) {
+                    userBadgeData.roles.forEach(roleName => {
+                        const roleData = rolesData[roleName];
+                        if (roleData) {
+                            allBadges.push({
+                                label: roleData.label,
+                                url: roleData.url,
+                            });
+                        }
+                    });
+                }
+
+                // process custom badges
+                if (userBadgeData.custom) {
+                    allBadges.push(...userBadgeData.custom);
+                }
+
+                badgesCache.set(userId, allBadges);
+
+                allBadges.forEach((badge, i) => {
+                    const badgeId = `opti-${userId}-${i}`;
+                    badgeProps.set(badgeId, {
+                        id: badgeId,
+                        source: { uri: badge.url },
+                        label: badge.label,
+                        userId,
                     });
                 });
+
+                FluxDispatcher.dispatch({ type: "USER_UPDATE", user: { id: userId } });
+            } finally {
+                pendingRequests.delete(userId);
             }
+        };
+
+        after("default", useBadgesModule, ([user], result) => {
+            if (!user) return;
+
+            const userId = user.userId;
+            const cached = badgesCache.get(userId);
+
+            if (!cached) {
+                if (!pendingRequests.has(userId)) {
+                    fetchAndProcessBadges(userId);
+                }
+                return;
+            }
+
+            cached.forEach((badge, i) => {
+                const badgeId = `opti-${userId}-${i}`;
+
+                result.unshift({
+                    id: badgeId,
+                    description: badge.label,
+                    icon: " _",
+                });
+            });
         });
     }
 });
