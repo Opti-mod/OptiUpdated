@@ -12,6 +12,7 @@ import { DISCORD_SERVER, GITHUB } from "@lib/utils/constants";
 import { NavigationNative, url } from "@metro/common";
 import { AlertActionButton, AlertActions, AlertModal, Stack, TableRow, TableRowGroup, TableSwitchRow } from "@metro/common/components";
 import { ScrollView } from "react-native";
+import AssetBrowser from "./AssetBrowser";
 
 export default function General() {
     useProxy(settings);
@@ -105,6 +106,16 @@ export default function General() {
                         onValueChange={(v: boolean) => {
                             settings.enableDiscordDeveloperSettings = v;
                         }}
+                    />
+                    <TableRow
+                        arrow
+                        label={Strings.ASSET_BROWSER}
+                        icon={<TableRow.Icon source={findAssetId("ic_image")} />}
+                        trailing={TableRow.Arrow}
+                        onPress={() => navigation.push("BUNNY_CUSTOM_PAGE", {
+                            title: Strings.ASSET_BROWSER,
+                            render: AssetBrowser,
+                        })}
                     />
                 </TableRowGroup>
             </Stack>

@@ -19,7 +19,7 @@ import { BUNNY_PROXY_PREFIX, VD_PROXY_PREFIX } from "@lib/utils/constants";
 import { lazyDestructure } from "@lib/utils/lazy";
 import { findByProps } from "@metro";
 import { NavigationNative } from "@metro/common";
-import { ActionSheet, BottomSheetTitleHeader, Button, Card, CompatSegmentedControl, FlashList, IconButton, TableRadioGroup, TableRadioRow, TableRowIcon, Text } from "@metro/common/components";
+import { ActionSheet, BottomSheetTitleHeader, Button, Card, FlashList, IconButton, TableRadioGroup, TableRadioRow, TableRowIcon, Text } from "@metro/common/components";
 import React, { ComponentProps, useEffect, useState } from "react";
 import { View } from "react-native";
 
@@ -248,11 +248,20 @@ export default function Plugins() {
 
     return (
         <View style={{ flex: 1 }}>
-            <View style={{ paddingHorizontal: 12, paddingTop: 10, paddingBottom: 2 }}>
-                <CompatSegmentedControl
-                    values={[Strings.PLUGINS, Strings.THEMES]}
-                    selectedSegmentIndex={selectedTab}
-                    onValueChange={(index) => setSelectedTab(index)}
+            <View style={{ flexDirection: "row", gap: 12, paddingHorizontal: 12, paddingTop: 10, paddingBottom: 6 }}>
+                <Button
+                    size="sm"
+                    variant={selectedTab === 0 ? "primary" : "secondary"}
+                    text={Strings.PLUGINS}
+                    onPress={() => setSelectedTab(0)}
+                    style={{ flex: 1 }}
+                />
+                <Button
+                    size="sm"
+                    variant={selectedTab === 1 ? "primary" : "secondary"}
+                    text={Strings.THEMES}
+                    onPress={() => setSelectedTab(1)}
+                    style={{ flex: 1 }}
                 />
             </View>
             {selectedTab === 0 ? <PluginsList /> : <ThemesList />}

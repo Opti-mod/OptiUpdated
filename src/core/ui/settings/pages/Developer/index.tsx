@@ -1,6 +1,6 @@
 import { Strings } from "@core/i18n";
 import { CheckState, useFileExists } from "@core/ui/hooks/useFS";
-import AssetBrowser from "@core/ui/settings/pages/Developer/AssetBrowser";
+import AssetBrowser from "@core/ui/settings/pages/General/AssetBrowser";
 import { useProxy } from "@core/vendetta/storage";
 import { findAssetId } from "@lib/api/assets";
 import { connectToDebugger } from "@lib/api/debug";
@@ -96,16 +96,6 @@ export default function Developer() {
                         </TableRowGroup>
                     </>}
                     <TableRowGroup title="Other">
-                        <TableRow
-                            arrow
-                            label={Strings.ASSET_BROWSER}
-                            icon={<TableRow.Icon source={findAssetId("ic_image")} />}
-                            trailing={TableRow.Arrow}
-                            onPress={() => navigation.push("BUNNY_CUSTOM_PAGE", {
-                                title: Strings.ASSET_BROWSER,
-                                render: AssetBrowser,
-                            })}
-                        />
                         <TableRow
                             arrow
                             label={Strings.ERROR_BOUNDARY_TOOLS_LABEL}
