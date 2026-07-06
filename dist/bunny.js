@@ -4654,7 +4654,7 @@
       init_logger();
       init_toasts();
       import_react_native5 = __toESM(require_react_native());
-      versionHash = "44deef9-local";
+      versionHash = "d18300f-local";
     }
   });
 
@@ -8377,6 +8377,7 @@
             `> Opti: ${info.bunny.version}`,
             `> Loader: ${info.bunny.loader.name} ${info.bunny.loader.version}`,
             `> Discord: ${info.discord.version} (${info.discord.build})`,
+            `-# Hermes: ${info.hermes.bytecodeVersion}  ${info.hermes.version}`,
             `-# React: ${info.react.version} (RN ${info.react.nativeVersion})`,
             `-# System: ${info.os.name} ${info.os.version} ${info.os.sdk ? `(SDK ${info.os.sdk})` : ""}`.trimEnd(),
             `-# Device: ${info.device.model} (${info.device.codename})`
@@ -15186,7 +15187,7 @@
             uri: pyoncord_default
           },
           render: () => Promise.resolve().then(() => (init_General(), General_exports)),
-          useTrailing: () => `(${"44deef9-local"})`
+          useTrailing: () => `(${"d18300f-local"})`
         },
         {
           key: "BUNNY_PLUGINS",
@@ -15683,7 +15684,7 @@
         alert([
           "Failed to load Opti!\n",
           `Build Number: ${ClientInfoManager.Build}`,
-          `Opti: ${"44deef9-local"}`,
+          `Opti: ${"d18300f-local"}`,
           stack || e?.toString?.()
         ].join("\n"));
       }

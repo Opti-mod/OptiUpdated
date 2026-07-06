@@ -49,5 +49,5 @@ jobs:
 
           - name: Purge CDN cache
             run: |
-                curl https://purge.jsdelivr.net/gh/pyoncord/bunny-build-infos@${{ github.ref_name }}/bunny.js
+                curl https://purge.jsdelivr.net/gh/Opti-mod/bunny-build-infos@${{ github.ref_name }}/bunny.js
                 

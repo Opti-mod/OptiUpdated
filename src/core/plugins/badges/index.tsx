@@ -18,7 +18,7 @@ export default defineCorePlugin({
         name: "Badges",
         version: "1.0.0",
         description: "Adds badges to user's profile",
-        authors: [{ name: "pylixonly" }]
+        authors: [{ name: "pylix" }]
     },
     start() {
         const propHolder = {} as Record<string, any>;
