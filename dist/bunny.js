@@ -4556,7 +4556,7 @@
       init_logger();
       init_toasts();
       import_react_native5 = __toESM(require_react_native());
-      versionHash = "74b4c36-main";
+      versionHash = "9995565-main";
     }
   });
 
@@ -8102,7 +8102,7 @@
           var propHolder = {};
           var badgeCache = {};
           onJsxCreate("RenderedBadge", (_2, ret) => {
-            if (ret.props.id.match(/bunny-\d+-\d+/)) {
+            if (ret.props.id.match(/opti-\d+-\d+/)) {
               Object.assign(ret.props, propHolder[ret.props.id]);
             }
           });
@@ -11368,7 +11368,7 @@
             uri: OptiLogo_default
           },
           render: () => Promise.resolve().then(() => (init_General(), General_exports)),
-          useTrailing: () => `(${"74b4c36-main"})`
+          useTrailing: () => `(${"9995565-main"})`
         },
         {
           key: "BUNNY_PLUGINS",
@@ -11871,7 +11871,7 @@
         alert([
           "Failed to load Opti!\n",
           `Build Number: ${ClientInfoManager.Build}`,
-          `Opti: ${"74b4c36-main"}`,
+          `Opti: ${"9995565-main"}`,
           stack || e?.toString?.()
         ].join("\n"));
       }
