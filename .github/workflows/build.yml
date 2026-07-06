@@ -15,16 +15,19 @@ jobs:
             uses: actions/checkout@v4
 
           - name: Checkout builds
+            env:
+                RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+            if: ${{ env.RELEASE_TOKEN != '' }}
             uses: actions/checkout@v4
             with:
                 repository: "bunny-mod/builds"
                 path: "builds"
-                token: ${{ secrets.BUILDS_TOKEN }}
+                token: ${{ secrets.RELEASE_TOKEN }}
                 ref: ${{ github.ref_name }}
 
           - uses: actions/setup-node@v4
             with:
-                node-version: 20
+                node-version: 22
 
           - name: Install pnpm and dependencies
             run: |
@@ -37,6 +40,9 @@ jobs:
           # TODO: Check for linting?
 
           - name: Push builds
+            env:
+                RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+            if: ${{ env.RELEASE_TOKEN != '' }}
             run: |
                 rm $GITHUB_WORKSPACE/builds/* || true
                 cp -r dist/* $GITHUB_WORKSPACE/builds || true
@@ -48,6 +54,9 @@ jobs:
                 git push
 
           - name: Purge CDN cache
+            env:
+                RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+            if: ${{ env.RELEASE_TOKEN != '' }}
             run: |
                 curl https://purge.jsdelivr.net/gh/Opti-mod/bunny-build-infos@${{ github.ref_name }}/bunny.js
                 

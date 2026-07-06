@@ -14,14 +14,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        env:
+            PYLIX_TOKEN: ${{ secrets.PYLIX_TOKEN }}
+        if: ${{ env.PYLIX_TOKEN != '' }}
         with:
             repository: "pyoncord/i18n"
             path: "main"
             token: ${{ secrets.PYLIX_TOKEN }}
       
       - name: Push
+        env:
+            PYLIX_TOKEN: ${{ secrets.PYLIX_TOKEN }}
+        if: ${{ env.PYLIX_TOKEN != '' }}
         run: |
           cp src/core/i18n/default.json $GITHUB_WORKSPACE/main/base/bunny.json
           cd $GITHUB_WORKSPACE/main
