@@ -5,8 +5,8 @@ An optimized Discord mobile experience. A fork of [Bunny](https://github.com/ven
 
 ### Android
 
-- **Root** with Xposed - [BunnyXposed](https://github.com/Opti-mod/BunnyXposed/releases/latest)
-- **Non-root** - [BunnyManager](https://github.com/Opti-mod/BunnyManager/releases/latest)
+- **Root** with Xposed - [OptiXposed](https://github.com/Opti-mod/OptiXposed/releases/latest)
+- **Non-root** - [OptiManager](https://github.com/Opti-mod/OptiManager/releases/latest)
 
 ### iOS
 - [**BunnyTweak**](https://github.com/pyoncord/BunnyTweak) - Get prebuilt rootful and rootless `.deb` files or the prepatched `.ipa `
@@ -28,8 +28,8 @@ An optimized Discord mobile experience. A fork of [Bunny](https://github.com/ven
     ```
     pnpm build
     ```
-1. In the newly created `dist` directory, run a HTTP server. I recommend [http-server](https://www.npmjs.com/package/http-server).
-1. Go to Settings > Developer enabled earlier. Enable `Load from custom url` and input the IP address and port of the server (e.g. `http://192.168.1.236:4040/bunny.js`) in the new input box labelled `Bunny URL`.
+1. In the newly created `dist` directory, run an HTTP server. I recommend [http-server](https://www.npmjs.com/package/http-server).
+1. Go to Settings > Developer and then enable `Load from custom url` and input the IP address and port of the server (e.g. `http://192.168.1.236:4040/bunny.js`) in the new input box labelled `Bunny URL`.
 1. Restart Discord. Upon reload, you should notice that your device will download Bunny's bundled code from your server, rather than GitHub.
 1. Make your changes, rebuild, reload, go wild!
 

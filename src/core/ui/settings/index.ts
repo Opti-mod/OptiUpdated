@@ -1,4 +1,4 @@
-import PyoncordIcon from "@assets/icons/pyoncord.png";
+import PyoncordIcon from "@assets/icons/OptiLogo.png";
 import { Strings } from "@core/i18n";
 import { useProxy } from "@core/vendetta/storage";
 import { findAssetId } from "@lib/api/assets";
@@ -39,6 +39,12 @@ export default function initSettings() {
                 icon: findAssetId("ic_add_text"),
                 render: () => import("@core/ui/settings/pages/Fonts"),
                 usePredicate: () => isFontSupported()
+            },
+            {
+                key: "OPTI_ADDON_HUB",
+                title: () => Strings.ADDON_HUB,
+                icon: findAssetId("ic_add_text"),
+                render: () => import("@core/ui/settings/pages/Addons")
             },
             {
                 key: "BUNNY_DEVELOPER",
