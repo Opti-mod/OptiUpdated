@@ -13,17 +13,8 @@ jobs:
         steps:
           - name: Checkout
             uses: actions/checkout@v4
-
-          - name: Checkout builds
-            env:
-                RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-            if: ${{ env.RELEASE_TOKEN != '' }}
-            uses: actions/checkout@v4
             with:
-                repository: "Opti-mod/builds"
-                path: "builds"
-                token: ${{ secrets.RELEASE_TOKEN }}
-                ref: ${{ github.ref_name }}
+                token: ${{ secrets.RELEASE_TOKEN || github.token }}
 
           - uses: actions/setup-node@v4
             with:
@@ -40,22 +31,13 @@ jobs:
           # TODO: Check for linting?
 
           - name: Push builds
-            env:
-                RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-            if: ${{ env.RELEASE_TOKEN != '' }}
             run: |
-                rm $GITHUB_WORKSPACE/builds/* || true
-                cp -r dist/* $GITHUB_WORKSPACE/builds || true
-                cd $GITHUB_WORKSPACE/builds
                 git config --local user.email "actions@github.com"
                 git config --local user.name "GitHub Actions"
-                git add .
-                git commit -m "Build $GITHUB_SHA" || exit 0
+                git add dist/
+                git commit -m "Build $GITHUB_SHA [skip ci]" || exit 0
                 git push
 
           - name: Purge CDN cache
-            env:
-                RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-            if: ${{ env.RELEASE_TOKEN != '' }}
             run: |
-                curl https://purge.jsdelivr.net/gh/Opti-mod/builds@${{ github.ref_name }}/bunny.js
+                curl https://purge.jsdelivr.net/gh/Opti-mod/Opti@${{ github.ref_name }}/dist/bunny.js
