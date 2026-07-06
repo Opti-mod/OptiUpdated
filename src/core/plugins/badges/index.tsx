@@ -15,10 +15,10 @@ const useBadgesModule = findByName("useBadges", false);
 export default defineCorePlugin({
     manifest: {
         id: "bunny.badges",
-        name: "Badges",
+        name: "Opti Badges",
         version: "1.0.0",
         description: "Adds badges to user's profile",
-        authors: [{ name: "pylix" }]
+        authors: [{ name: "byeoon, pylix" }]
     },
     start() {
         const propHolder = {} as Record<string, any>;
@@ -35,7 +35,7 @@ export default defineCorePlugin({
 
             useEffect(() => {
                 if (user) {
-                    fetch(`https://raw.githubusercontent.com/pyoncord/badges/refs/heads/main/${user.userId}.json`)
+                    fetch(`https://raw.githubusercontent.com/Opti-mod/badges/refs/heads/main/${user.userId}.json`)
                         .then(r => r.json())
                         .then(badges => setBadges(badgeCache[user.userId] = badges));
                 }
@@ -43,14 +43,14 @@ export default defineCorePlugin({
 
             if (user) {
                 badges.forEach((badges, i) => {
-                    propHolder[`bunny-${user.userId}-${i}`] = {
+                    propHolder[`opti-${user.userId}-${i}`] = {
                         source: { uri: badges.url },
-                        id: `bunny-${i}`,
+                        id: `opti-${i}`,
                         label: badges.label
                     };
 
                     r.push({
-                        id: `bunny-${user.userId}-${i}`,
+                        id: `opti-${user.userId}-${i}`,
                         description: badges.label,
                         icon: "_",
                     });

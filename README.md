@@ -5,13 +5,13 @@ An optimized Discord mobile experience. A fork of [Bunny](https://github.com/ven
 
 ### Android
 
-- **Root** with Xposed - [BunnyXposed](https://github.com/pyoncord/BunnyXposed/releases/latest)
-- **Non-root** - [BunnyManager](https://github.com/pyoncord/BunnyManager/releases/latest)
+- **Root** with Xposed - [BunnyXposed](https://github.com/Opti-mod/BunnyXposed/releases/latest)
+- **Non-root** - [BunnyManager](https://github.com/Opti-mod/BunnyManager/releases/latest)
 
 ### iOS
 - [**BunnyTweak**](https://github.com/pyoncord/BunnyTweak) - Get prebuilt rootful and rootless `.deb` files or the prepatched `.ipa `
 
-- **Enmity Sideloading** - Sideload with the following URL:  https://raw.githubusercontent.com/Opti-mod/OptiUpdated/refs/heads/main/dist/bunny.js 
+- **Enmity Sideloading** - Sideload with the following URL:  https://raw.githubusercontent.com/Opti-mod/Opti/refs/heads/main/dist/bunny.js 
 
 ## Building
 1. Install an Opti loader with loader config support (any mentioned in the [Installing](#installing) section).
