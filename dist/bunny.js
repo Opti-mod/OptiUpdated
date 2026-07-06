@@ -4378,7 +4378,7 @@
         PLATFORM: "Platform",
         PLUGIN_REFETCH_FAILED: "Failed to refetch plugin!",
         PLUGIN_REFETCH_SUCCESSFUL: "Successfully refetched plugin!",
-        PLUGINS: "Plugins",
+        PLUGINS: "Addons",
         REFETCH: "Refetch",
         RELOAD: "Reload",
         RELOAD_DISCORD: "Reload Discord",
@@ -4655,7 +4655,7 @@
       init_logger();
       init_toasts();
       import_react_native5 = __toESM(require_react_native());
-      versionHash = "b387aa1-main";
+      versionHash = "0c5313f-main";
     }
   });
 
@@ -15286,11 +15286,11 @@
             uri: OptiLogo_default
           },
           render: () => Promise.resolve().then(() => (init_General(), General_exports)),
-          useTrailing: () => `(${"b387aa1-main"})`
+          useTrailing: () => `(${"0c5313f-main"})`
         },
         {
           key: "BUNNY_PLUGINS",
-          title: () => `${Strings.PLUGINS} & ${Strings.THEMES}`,
+          title: () => `${Strings.PLUGINS}`,
           icon: findAssetId("ActivitiesIcon"),
           render: () => Promise.resolve().then(() => (init_Plugins(), Plugins_exports))
         },
@@ -15782,7 +15782,7 @@
         alert([
           "Failed to load Opti!\n",
           `Build Number: ${ClientInfoManager.Build}`,
-          `Opti: ${"b387aa1-main"}`,
+          `Opti: ${"0c5313f-main"}`,
           stack || e?.toString?.()
         ].join("\n"));
       }
