@@ -22,16 +22,9 @@ export default function initSettings() {
             },
             {
                 key: "BUNNY_PLUGINS",
-                title: () => Strings.PLUGINS,
+                title: () => `${Strings.PLUGINS} & ${Strings.THEMES}`,
                 icon: findAssetId("ActivitiesIcon"),
                 render: () => import("@core/ui/settings/pages/Plugins")
-            },
-            {
-                key: "BUNNY_THEMES",
-                title: () => Strings.THEMES,
-                icon: findAssetId("PaintPaletteIcon"),
-                render: () => import("@core/ui/settings/pages/Themes"),
-                usePredicate: () => isThemeSupported()
             },
             {
                 key: "BUNNY_FONTS",
@@ -43,7 +36,7 @@ export default function initSettings() {
             {
                 key: "OPTI_ADDON_HUB",
                 title: () => Strings.ADDON_HUB,
-                icon: findAssetId("ic_add_text"),
+                icon: findAssetId("DownloadIcon"),
                 render: () => import("@core/ui/settings/pages/Addons")
             },
             {

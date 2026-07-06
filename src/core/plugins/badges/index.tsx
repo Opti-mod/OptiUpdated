@@ -44,15 +44,10 @@ const pendingRequests = new Set<string>();
 export default defineCorePlugin({
     manifest: {
         id: "bunny.badges",
+        name: "Opti Badges",
         version: "1.1.0",
-        type: "plugin",
-        spec: 3,
-        main: "",
-        display: {
-            name: "Badges",
-            description: "Adds badges to user's profile",
-            authors: [{ name: "cocobo1" }, { name: "byeoon" }, { name: "pylixonly" }]
-        }
+        description: "Adds badges to user profiles",
+        authors: [{ name: "cocobo1" }, { name: "byeoon" }, { name: "pylix" }],
     },
 
     start() {
