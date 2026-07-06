@@ -20,7 +20,7 @@ jobs:
             if: ${{ env.RELEASE_TOKEN != '' }}
             uses: actions/checkout@v4
             with:
-                repository: "bunny-mod/builds"
+                repository: "Opti-mod/builds"
                 path: "builds"
                 token: ${{ secrets.RELEASE_TOKEN }}
                 ref: ${{ github.ref_name }}
@@ -58,5 +58,4 @@ jobs:
                 RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
             if: ${{ env.RELEASE_TOKEN != '' }}
             run: |
-                curl https://purge.jsdelivr.net/gh/Opti-mod/bunny-build-infos@${{ github.ref_name }}/bunny.js
-                
+                curl https://purge.jsdelivr.net/gh/Opti-mod/builds@${{ github.ref_name }}/bunny.js

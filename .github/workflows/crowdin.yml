@@ -20,7 +20,7 @@ jobs:
             PYLIX_TOKEN: ${{ secrets.PYLIX_TOKEN }}
         if: ${{ env.PYLIX_TOKEN != '' }}
         with:
-            repository: "pyoncord/i18n"
+            repository: "Opti-mod/i18n"
             path: "main"
             token: ${{ secrets.PYLIX_TOKEN }}
       
