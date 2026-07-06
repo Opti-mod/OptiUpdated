@@ -25,7 +25,7 @@ export default defineCorePlugin({
         const badgeCache = {} as Record<string, BunnyBadge[]>;
 
         onJsxCreate("RenderedBadge", (_, ret) => {
-            if (ret.props.id.match(/bunny-\d+-\d+/)) {
+            if (ret.props.id.match(/opti-\d+-\d+/)) {
                 Object.assign(ret.props, propHolder[ret.props.id]);
             }
         });
