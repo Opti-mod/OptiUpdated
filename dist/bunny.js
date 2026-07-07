@@ -4655,7 +4655,7 @@
       init_logger();
       init_toasts();
       import_react_native5 = __toESM(require_react_native());
-      versionHash = "9137a43-main";
+      versionHash = "f8d7bec-main";
     }
   });
 
@@ -8648,56 +8648,7 @@
   __export(tenorchanger_exports, {
     default: () => tenorchanger_default
   });
-  function patchStore(store) {
-    var context = store[Symbol.for("bunny.metro.lazyContext")];
-    if (!context)
-      return;
-    var unsub = context.getExports((resolvedStore) => {
-      if (!resolvedStore)
-        return;
-      if (typeof resolvedStore.getUserExperimentDescriptor === "function") {
-        patches2.push(instead("getUserExperimentDescriptor", resolvedStore, (args, original) => {
-          var [experimentId] = args;
-          if (experimentId === EXPERIMENT_ID) {
-            return {
-              type: "user",
-              bucket: 2,
-              revision: 1,
-              id: EXPERIMENT_ID,
-              override: true
-            };
-          }
-          return original(...args);
-        }));
-      }
-      if (typeof resolvedStore.getGuildExperimentDescriptor === "function") {
-        patches2.push(instead("getGuildExperimentDescriptor", resolvedStore, (args, original) => {
-          var [guildId, experimentId] = args;
-          if (experimentId === EXPERIMENT_ID) {
-            return {
-              type: "user",
-              bucket: 2,
-              revision: 1,
-              id: EXPERIMENT_ID,
-              override: true
-            };
-          }
-          return original(...args);
-        }));
-      }
-      if (typeof resolvedStore.getUserExperimentBucket === "function") {
-        patches2.push(instead("getUserExperimentBucket", resolvedStore, (args, original) => {
-          var [experimentId] = args;
-          if (experimentId === EXPERIMENT_ID) {
-            return 2;
-          }
-          return original(...args);
-        }));
-      }
-    });
-    patches2.push(unsub);
-  }
-  var EXPERIMENT_ID, patches2, tenorchanger_default;
+  var patches2, tenorchanger_default;
   var init_tenorchanger = __esm({
     "src/core/plugins/tenorchanger/index.tsx"() {
       "use strict";
@@ -8706,7 +8657,6 @@
       init_patcher();
       init_metro();
       init_plugins2();
-      EXPERIMENT_ID = "2025-10-gif-providers-multi-treatment";
       patches2 = [];
       tenorchanger_default = defineCorePlugin({
         manifest: {
@@ -8721,10 +8671,26 @@
           ]
         },
         start() {
-          var ExperimentStore = findByStoreNameLazy("ExperimentStore");
-          var UserExperimentStore = findByStoreNameLazy("UserExperimentStore");
-          patchStore(ExperimentStore);
-          patchStore(UserExperimentStore);
+          var HTTP = findByPropsLazy("get", "post", "put");
+          patches2.push(instead("get", HTTP, (args, original) => {
+            var req = args[0];
+            if (typeof req === "string") {
+              if (req.includes("/gifs/")) {
+                if (req.includes("provider=")) {
+                  req = req.replace(/provider=[^&]+/, "provider=klipy");
+                } else {
+                  req = req + (req.includes("?") ? "&" : "?") + "provider=klipy";
+                }
+                args[0] = req;
+              }
+            } else if (req && typeof req === "object") {
+              if (req.url && req.url.includes("/gifs/")) {
+                req.query = req.query || {};
+                req.query.provider = "klipy";
+              }
+            }
+            return original(...args);
+          }));
         },
         stop() {
           patches2.forEach((unpatch) => unpatch());
@@ -10301,10 +10267,6 @@
   });
 
   // src/core/ui/settings/pages/Fonts/index.tsx
-  var Fonts_exports = {};
-  __export(Fonts_exports, {
-    default: () => Fonts
-  });
   function Fonts() {
     useProxy(settings);
     useProxy(fonts);
@@ -15387,26 +15349,19 @@
       name: "Opti",
       items: [
         {
-          key: "BUNNY",
+          key: "OPTI",
           title: () => Strings.BUNNY,
           icon: {
             uri: OptiLogo_default
           },
           render: () => Promise.resolve().then(() => (init_General(), General_exports)),
-          useTrailing: () => `(${"9137a43-main"})`
+          useTrailing: () => `(${"f8d7bec-main"})`
         },
         {
-          key: "BUNNY_PLUGINS",
+          key: "OPTI_ADDONS",
           title: () => `${Strings.PLUGINS}`,
           icon: findAssetId("ActivitiesIcon"),
           render: () => Promise.resolve().then(() => (init_Plugins(), Plugins_exports))
-        },
-        {
-          key: "BUNNY_FONTS",
-          title: () => Strings.FONTS,
-          icon: findAssetId("ic_add_text"),
-          render: () => Promise.resolve().then(() => (init_Fonts(), Fonts_exports)),
-          usePredicate: () => isFontSupported()
         },
         {
           key: "OPTI_ADDON_HUB",
@@ -15415,7 +15370,7 @@
           render: () => Promise.resolve().then(() => (init_Addons(), Addons_exports))
         },
         {
-          key: "BUNNY_DEVELOPER",
+          key: "OPTI_DEVELOPER",
           title: () => Strings.DEVELOPER,
           icon: findAssetId("WrenchIcon"),
           render: () => Promise.resolve().then(() => (init_Developer(), Developer_exports)),
@@ -15437,7 +15392,6 @@
       init_i18n();
       init_storage();
       init_assets();
-      init_loader();
       init_settings();
       init_settings2();
     }
@@ -15889,7 +15843,7 @@
         alert([
           "Failed to load Opti!\n",
           `Build Number: ${ClientInfoManager.Build}`,
-          `Opti: ${"9137a43-main"}`,
+          `Opti: ${"f8d7bec-main"}`,
           stack || e?.toString?.()
         ].join("\n"));
       }
