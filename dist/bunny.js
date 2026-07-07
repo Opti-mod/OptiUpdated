@@ -4655,7 +4655,7 @@
       init_logger();
       init_toasts();
       import_react_native5 = __toESM(require_react_native());
-      versionHash = "f8d7bec-main";
+      versionHash = "7e85b75-main";
     }
   });
 
@@ -6274,7 +6274,7 @@
               }),
               /* @__PURE__ */ jsx(TableSwitchRow, {
                 label: "Safe Mode",
-                subLabel: "Load Bunny without loading add-ons",
+                subLabel: "Load Opti without loading add-ons",
                 icon: /* @__PURE__ */ jsx(TableRow.Icon, {
                   source: findAssetId("ShieldIcon")
                 }),
@@ -8648,7 +8648,38 @@
   __export(tenorchanger_exports, {
     default: () => tenorchanger_default
   });
-  var patches2, tenorchanger_default;
+  function patchObject(obj, moduleId, path, visited = /* @__PURE__ */ new Set()) {
+    if (!obj || typeof obj !== "object" || visited.has(obj))
+      return;
+    visited.add(obj);
+    for (var key in obj) {
+      try {
+        var val = obj[key];
+        if (typeof val === "string") {
+          if (val.includes("tenor")) {
+            var replaced = val.replaceAll("tenor", "klipy");
+            logger2.log(`[${moduleId}] Replacing ${path}.${key}: "${val}" -> "${replaced}"`);
+            obj[key] = replaced;
+          } else if (val.includes("Tenor")) {
+            var replaced1 = val.replaceAll("Tenor", "Klipy");
+            logger2.log(`[${moduleId}] Replacing ${path}.${key}: "${val}" -> "${replaced1}"`);
+            obj[key] = replaced1;
+          }
+        } else if (val instanceof RegExp) {
+          var regexStr = val.source;
+          if (regexStr.includes("tenor") || regexStr.includes("Tenor")) {
+            var newRegexStr = regexStr.replaceAll("tenor", "klipy").replaceAll("Tenor", "Klipy");
+            logger2.log(`[${moduleId}] Replacing regex ${path}.${key}: ${val} -> /${newRegexStr}/${val.flags}`);
+            obj[key] = new RegExp(newRegexStr, val.flags);
+          }
+        } else if (typeof val === "object" && val !== null) {
+          patchObject(val, moduleId, `${path}.${key}`, visited);
+        }
+      } catch (e) {
+      }
+    }
+  }
+  var logger2, patches2, tenorchanger_default;
   var init_tenorchanger = __esm({
     "src/core/plugins/tenorchanger/index.tsx"() {
       "use strict";
@@ -8656,7 +8687,9 @@
       init_promiseAllSettled();
       init_patcher();
       init_metro();
+      init_logger();
       init_plugins2();
+      logger2 = new LoggerClass("TenorChanger");
       patches2 = [];
       tenorchanger_default = defineCorePlugin({
         manifest: {
@@ -8674,8 +8707,13 @@
           var HTTP = findByPropsLazy("get", "post", "put");
           patches2.push(instead("get", HTTP, (args, original) => {
             var req = args[0];
+            var isGifRequest = false;
+            var originalReq = typeof req === "string" ? req : {
+              ...req
+            };
             if (typeof req === "string") {
               if (req.includes("/gifs/")) {
+                isGifRequest = true;
                 if (req.includes("provider=")) {
                   req = req.replace(/provider=[^&]+/, "provider=klipy");
                 } else {
@@ -8685,12 +8723,70 @@
               }
             } else if (req && typeof req === "object") {
               if (req.url && req.url.includes("/gifs/")) {
+                isGifRequest = true;
                 req.query = req.query || {};
                 req.query.provider = "klipy";
               }
             }
-            return original(...args);
+            if (isGifRequest) {
+              logger2.log(`GIF Request Intercepted!`, {
+                original: originalReq,
+                modified: args[0]
+              });
+            }
+            var result = original(...args);
+            if (isGifRequest && result && typeof result.then === "function") {
+              result.then((response) => {
+                logger2.log(`GIF Request Success!`, {
+                  url: typeof args[0] === "string" ? args[0] : args[0]?.url,
+                  responseStatus: response?.status,
+                  responseBody: response?.body || response
+                });
+              }).catch((err) => {
+                logger2.error(`GIF Request Error!`, {
+                  url: typeof args[0] === "string" ? args[0] : args[0]?.url,
+                  error: err
+                });
+              });
+            }
+            return result;
           }));
+          var modules = window.modules;
+          if (modules) {
+            var _loop2 = function(id2) {
+              var m3 = modules[id2];
+              if (m3 && m3.factory && !m3.isInitialized) {
+                var code = m3.factory.toString();
+                if (code.includes("tenor") || code.includes("Tenor")) {
+                  var originalFactory = m3.factory;
+                  m3.factory = function(global, require2, metroImportDefault, metroImportAll, module, exports2) {
+                    originalFactory.apply(this, arguments);
+                    var moduleExports = module.exports;
+                    if (moduleExports) {
+                      if (moduleExports.default) {
+                        patchObject(moduleExports.default, id2, "default");
+                      }
+                      patchObject(moduleExports, id2, "exports");
+                    }
+                  };
+                }
+              }
+            };
+            for (var id in modules)
+              _loop2(id);
+            for (var id1 in modules) {
+              var m2 = modules[id1];
+              if (m2 && m2.isInitialized && m2.publicModule && m2.publicModule.exports) {
+                var exports = m2.publicModule.exports;
+                if (exports) {
+                  if (exports.default) {
+                    patchObject(exports.default, id1, "default");
+                  }
+                  patchObject(exports, id1, "exports");
+                }
+              }
+            }
+          }
         },
         stop() {
           patches2.forEach((unpatch) => unpatch());
@@ -15355,7 +15451,7 @@
             uri: OptiLogo_default
           },
           render: () => Promise.resolve().then(() => (init_General(), General_exports)),
-          useTrailing: () => `(${"f8d7bec-main"})`
+          useTrailing: () => `(${"7e85b75-main"})`
         },
         {
           key: "OPTI_ADDONS",
@@ -15843,7 +15939,7 @@
         alert([
           "Failed to load Opti!\n",
           `Build Number: ${ClientInfoManager.Build}`,
-          `Opti: ${"f8d7bec-main"}`,
+          `Opti: ${"7e85b75-main"}`,
           stack || e?.toString?.()
         ].join("\n"));
       }
