@@ -3119,7 +3119,7 @@
     });
   }
   function patchChatBackground() {
-    var patches2 = [
+    var patches3 = [
       after("render", Messages, (_2, ret) => {
         if (!_colorRef.current || !_colorRef.current.background?.url)
           return;
@@ -3139,7 +3139,7 @@
         });
       })
     ];
-    return () => patches2.forEach((x2) => x2());
+    return () => patches3.forEach((x2) => x2());
   }
   var import_chroma_js2, import_react_native3, Messages;
   var init_background = __esm({
@@ -3255,7 +3255,7 @@
       "ThemeStore",
       "SelectivelySyncedUserSettingsStore"
     ]);
-    var patches2 = [
+    var patches3 = [
       after("get", mmkvStorage, ([key], ret) => {
         if (!_colorRef.current || !patchedKeys.has(key))
           return;
@@ -3275,7 +3275,7 @@
         ];
       })
     ];
-    return () => patches2.forEach((p) => p());
+    return () => patches3.forEach((p) => p());
   }
   var mmkvStorage;
   var init_storage3 = __esm({
@@ -3299,7 +3299,7 @@
 
   // src/lib/addons/themes/colors/index.ts
   function initColors(manifest) {
-    var patches2 = [
+    var patches3 = [
       patchStorage(),
       patchDefinitionAndResolver(),
       patchChatBackground()
@@ -3308,7 +3308,7 @@
       updateBunnyColor(manifest, {
         update: false
       });
-    return () => patches2.forEach((p) => p());
+    return () => patches3.forEach((p) => p());
   }
   var init_colors = __esm({
     "src/lib/addons/themes/colors/index.ts"() {
@@ -4655,7 +4655,7 @@
       init_logger();
       init_toasts();
       import_react_native5 = __toESM(require_react_native());
-      versionHash = "0c5313f-main";
+      versionHash = "9137a43-main";
     }
   });
 
@@ -8319,11 +8319,11 @@
         });
       });
       forumPost_default = () => {
-        var patches2 = [
+        var patches3 = [
           // actionSheetPatch(),
           installButtonPatch()
         ];
-        return () => patches2.map((p) => p());
+        return () => patches3.map((p) => p());
       };
     }
   });
@@ -8370,8 +8370,8 @@
       ({ getChannelId } = lazyDestructure(() => channels));
       ({ getChannel } = lazyDestructure(() => findByProps("getChannel")));
       url_default = () => {
-        var patches2 = new Array();
-        patches2.push(after("showSimpleActionSheet", showSimpleActionSheet3, (args) => {
+        var patches3 = new Array();
+        patches3.push(after("showSimpleActionSheet", showSimpleActionSheet3, (args) => {
           if (args[0].key !== "LongPressUrl")
             return;
           var { header: { title: url2 }, options } = args[0];
@@ -8383,7 +8383,7 @@
             onPress: () => installWithToast(urlType, url2)
           });
         }));
-        patches2.push(instead("handleClick", handleClick, /* @__PURE__ */ function() {
+        patches3.push(instead("handleClick", handleClick, /* @__PURE__ */ function() {
           var _ref = _async_to_generator(function* (args, orig) {
             var { href: url2 } = args[0];
             var urlType = typeFromUrl(url2);
@@ -8407,7 +8407,7 @@
             return _ref.apply(this, arguments);
           };
         }()));
-        return () => patches2.forEach((p) => p());
+        return () => patches3.forEach((p) => p());
       };
     }
   });
@@ -8484,11 +8484,11 @@
         return ret;
       }
     };
-    var patches2 = [
+    var patches3 = [
       after("jsx", jsxRuntime2, callback),
       after("jsxs", jsxRuntime2, callback)
     ];
-    return () => patches2.forEach((unpatch) => unpatch());
+    return () => patches3.forEach((unpatch) => unpatch());
   }
   var callbacks, jsxRuntime2;
   var init_jsx = __esm({
@@ -8643,6 +8643,97 @@
     }
   });
 
+  // src/core/plugins/tenorchanger/index.tsx
+  var tenorchanger_exports = {};
+  __export(tenorchanger_exports, {
+    default: () => tenorchanger_default
+  });
+  function patchStore(store) {
+    var context = store[Symbol.for("bunny.metro.lazyContext")];
+    if (!context)
+      return;
+    var unsub = context.getExports((resolvedStore) => {
+      if (!resolvedStore)
+        return;
+      if (typeof resolvedStore.getUserExperimentDescriptor === "function") {
+        patches2.push(instead("getUserExperimentDescriptor", resolvedStore, (args, original) => {
+          var [experimentId] = args;
+          if (experimentId === EXPERIMENT_ID) {
+            return {
+              type: "user",
+              bucket: 2,
+              revision: 1,
+              id: EXPERIMENT_ID,
+              override: true
+            };
+          }
+          return original(...args);
+        }));
+      }
+      if (typeof resolvedStore.getGuildExperimentDescriptor === "function") {
+        patches2.push(instead("getGuildExperimentDescriptor", resolvedStore, (args, original) => {
+          var [guildId, experimentId] = args;
+          if (experimentId === EXPERIMENT_ID) {
+            return {
+              type: "user",
+              bucket: 2,
+              revision: 1,
+              id: EXPERIMENT_ID,
+              override: true
+            };
+          }
+          return original(...args);
+        }));
+      }
+      if (typeof resolvedStore.getUserExperimentBucket === "function") {
+        patches2.push(instead("getUserExperimentBucket", resolvedStore, (args, original) => {
+          var [experimentId] = args;
+          if (experimentId === EXPERIMENT_ID) {
+            return 2;
+          }
+          return original(...args);
+        }));
+      }
+    });
+    patches2.push(unsub);
+  }
+  var EXPERIMENT_ID, patches2, tenorchanger_default;
+  var init_tenorchanger = __esm({
+    "src/core/plugins/tenorchanger/index.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_patcher();
+      init_metro();
+      init_plugins2();
+      EXPERIMENT_ID = "2025-10-gif-providers-multi-treatment";
+      patches2 = [];
+      tenorchanger_default = defineCorePlugin({
+        manifest: {
+          id: "bunny.tenorchanger",
+          name: "TenorChanger",
+          version: "1.0.0",
+          description: "Changes the default GIF picker from Tenor to Klipy",
+          authors: [
+            {
+              name: "byeoon"
+            }
+          ]
+        },
+        start() {
+          var ExperimentStore = findByStoreNameLazy("ExperimentStore");
+          var UserExperimentStore = findByStoreNameLazy("UserExperimentStore");
+          patchStore(ExperimentStore);
+          patchStore(UserExperimentStore);
+        },
+        stop() {
+          patches2.forEach((unpatch) => unpatch());
+          patches2 = [];
+        }
+      });
+    }
+  });
+
   // src/core/plugins/index.ts
   function defineCorePlugin(instance) {
     instance[Symbol.for("bunny.core.plugin")] = true;
@@ -8656,7 +8747,8 @@
       init_promiseAllSettled();
       getCorePlugins = () => ({
         "bunny.quickinstall": (init_quickinstall(), __toCommonJS(quickinstall_exports)),
-        "bunny.badges": (init_badges(), __toCommonJS(badges_exports))
+        "bunny.badges": (init_badges(), __toCommonJS(badges_exports)),
+        "bunny.tenorchanger": (init_tenorchanger(), __toCommonJS(tenorchanger_exports))
       });
     }
   });
@@ -9471,915 +9563,6 @@
     }
   });
 
-  // src/metro/common/stores.ts
-  var UserStore;
-  var init_stores = __esm({
-    "src/metro/common/stores.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_wrappers();
-      UserStore = findByStoreNameLazy("UserStore");
-    }
-  });
-
-  // src/core/ui/settings/pages/Plugins/sheets/TitleComponent.tsx
-  function TitleComponent({ plugin }) {
-    var users = FluxUtils.useStateFromStoresArray([
-      UserStore
-    ], () => {
-      plugin.authors?.forEach((a) => a.id && maybeFetchUser(a.id));
-      return plugin.authors?.map((a) => UserStore.getUser(a.id));
-    });
-    var { authors } = plugin;
-    var authorTextNode = [];
-    if (authors) {
-      var _loop2 = function(author2) {
-        authorTextNode.push(/* @__PURE__ */ jsx(Text, {
-          onPress: () => showUserProfileActionSheet({
-            userId: author2.id
-          }),
-          variant: "text-md/medium",
-          children: author2.name
-        }));
-        authorTextNode.push(", ");
-      };
-      for (var author of authors)
-        _loop2(author);
-      authorTextNode.pop();
-    }
-    return /* @__PURE__ */ jsxs(import_react_native22.View, {
-      style: {
-        gap: 4
-      },
-      children: [
-        /* @__PURE__ */ jsx(import_react_native22.View, {
-          children: /* @__PURE__ */ jsx(Text, {
-            variant: "heading-xl/semibold",
-            children: plugin.name
-          })
-        }),
-        /* @__PURE__ */ jsx(import_react_native22.View, {
-          style: {
-            flexDirection: "row",
-            flexShrink: 1
-          },
-          children: authors?.length && /* @__PURE__ */ jsxs(import_react_native22.View, {
-            style: {
-              flexDirection: "row",
-              gap: 8,
-              alignItems: "center",
-              paddingVertical: 4,
-              paddingHorizontal: 8,
-              backgroundColor: "#00000016",
-              borderRadius: 32
-            },
-            children: [
-              users.length && /* @__PURE__ */ jsx(AvatarPile, {
-                size: "xxsmall",
-                names: plugin.authors?.map((a) => a.name),
-                totalCount: plugin.authors?.length,
-                children: users.map((a) => /* @__PURE__ */ jsx(Avatar, {
-                  size: "xxsmall",
-                  user: a
-                }))
-              }),
-              /* @__PURE__ */ jsx(Text, {
-                variant: "text-md/medium",
-                children: authorTextNode
-              })
-            ]
-          })
-        })
-      ]
-    });
-  }
-  var import_react_native22, showUserProfileActionSheet, maybeFetchUser;
-  var init_TitleComponent = __esm({
-    "src/core/ui/settings/pages/Plugins/sheets/TitleComponent.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_jsxRuntime();
-      init_lazy();
-      init_metro();
-      init_common();
-      init_components();
-      init_stores();
-      import_react_native22 = __toESM(require_react_native());
-      showUserProfileActionSheet = findByNameLazy("showUserProfileActionSheet");
-      ({ getUser: maybeFetchUser } = lazyDestructure(() => findByProps("getUser", "fetchProfile")));
-    }
-  });
-
-  // src/core/ui/settings/pages/Plugins/sheets/PluginInfoActionSheet.tsx
-  var PluginInfoActionSheet_exports = {};
-  __export(PluginInfoActionSheet_exports, {
-    default: () => PluginInfoActionSheet
-  });
-  function PluginInfoIconButton(props) {
-    var { onPress } = props;
-    props.onPress &&= () => {
-      hideSheet("PluginInfoActionSheet");
-      onPress?.();
-    };
-    return /* @__PURE__ */ jsx(IconButton, {
-      ...props
-    });
-  }
-  function PluginInfoActionSheet({ plugin, navigation: navigation2 }) {
-    plugin.usePluginState();
-    return /* @__PURE__ */ jsx(ActionSheet, {
-      children: /* @__PURE__ */ jsxs(import_react_native23.ScrollView, {
-        contentContainerStyle: {
-          gap: 12,
-          marginBottom: 12
-        },
-        children: [
-          /* @__PURE__ */ jsxs(import_react_native23.View, {
-            style: {
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 8,
-              paddingVertical: 24,
-              justifyContent: "space-between",
-              width: "100%"
-            },
-            children: [
-              /* @__PURE__ */ jsx(TitleComponent, {
-                plugin
-              }),
-              /* @__PURE__ */ jsx(ContextMenu, {
-                items: [
-                  {
-                    label: "Details",
-                    iconSource: findAssetId("CircleInformationIcon-primary"),
-                    action: () => {
-                    }
-                  },
-                  // {
-                  //     label: true ? "Disable Updates" : "Enable Updates",
-                  //     iconSource: true ? findAssetId("ClockXIcon") : findAssetId("ClockIcon"),
-                  //     action: () => {
-                  //     }
-                  // },
-                  {
-                    label: "Clear Data",
-                    iconSource: findAssetId("FileIcon"),
-                    variant: "destructive",
-                    action: () => {
-                    }
-                  },
-                  {
-                    label: "Uninstall",
-                    iconSource: findAssetId("TrashIcon"),
-                    variant: "destructive",
-                    action: () => {
-                    }
-                  }
-                ],
-                children: (props) => /* @__PURE__ */ jsx(IconButton, {
-                  ...props,
-                  icon: findAssetId("MoreHorizontalIcon"),
-                  variant: "secondary",
-                  size: "sm"
-                })
-              })
-            ]
-          }),
-          /* @__PURE__ */ jsxs(import_react_native23.View, {
-            style: {
-              flexDirection: "row",
-              justifyContent: "space-around",
-              alignContent: "center"
-            },
-            children: [
-              /* @__PURE__ */ jsx(PluginInfoIconButton, {
-                label: "Configure",
-                variant: "secondary",
-                disabled: !plugin.getPluginSettingsComponent(),
-                icon: findAssetId("WrenchIcon"),
-                onPress: () => {
-                  navigation2.push("BUNNY_CUSTOM_PAGE", {
-                    title: plugin.name,
-                    render: plugin.getPluginSettingsComponent()
-                  });
-                }
-              }),
-              /* @__PURE__ */ jsx(PluginInfoIconButton, {
-                label: "Refetch",
-                variant: "secondary",
-                icon: findAssetId("RetryIcon"),
-                onPress: () => {
-                  startPlugin(plugin.id);
-                }
-              }),
-              /* @__PURE__ */ jsx(PluginInfoIconButton, {
-                label: "Copy URL",
-                variant: "secondary",
-                icon: findAssetId("LinkIcon"),
-                onPress: () => {
-                }
-              })
-            ]
-          }),
-          /* @__PURE__ */ jsxs(Card, {
-            children: [
-              /* @__PURE__ */ jsx(Text, {
-                variant: "text-md/semibold",
-                color: "text-primary",
-                style: {
-                  marginBottom: 4
-                },
-                children: "Description"
-              }),
-              /* @__PURE__ */ jsx(Text, {
-                variant: "text-md/medium",
-                children: plugin.description
-              })
-            ]
-          })
-        ]
-      })
-    });
-  }
-  var import_react_native23;
-  var init_PluginInfoActionSheet = __esm({
-    "src/core/ui/settings/pages/Plugins/sheets/PluginInfoActionSheet.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_jsxRuntime();
-      init_plugins4();
-      init_assets();
-      init_sheets();
-      init_components();
-      import_react_native23 = __toESM(require_react_native());
-      init_TitleComponent();
-    }
-  });
-
-  // src/core/ui/settings/pages/Plugins/models/bunny.ts
-  function unifyBunnyPlugin(manifest) {
-    return {
-      id: manifest.id,
-      name: manifest.display.name,
-      description: manifest.display.description,
-      authors: manifest.display.authors,
-      getBadges() {
-        return [
-          {
-            source: {
-              uri: OptiLogo_default
-            }
-          }
-        ];
-      },
-      isEnabled: () => isPluginEnabled(manifest.id),
-      isInstalled: () => manifest.id in pluginSettings,
-      usePluginState() {
-        useObservable([
-          pluginSettings
-        ]);
-      },
-      toggle(start) {
-        try {
-          start ? enablePlugin(manifest.id, true) : disablePlugin(manifest.id);
-        } catch (e) {
-          console.error(e);
-          showToast("Failed to toggle plugin " + e, findAssetId("Small"));
-        }
-      },
-      resolveSheetComponent() {
-        return Promise.resolve().then(() => (init_PluginInfoActionSheet(), PluginInfoActionSheet_exports));
-      },
-      getPluginSettingsComponent() {
-        return getPluginSettingsComponent(manifest.id);
-      }
-    };
-  }
-  var init_bunny = __esm({
-    "src/core/ui/settings/pages/Plugins/models/bunny.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_settings3();
-      init_plugins4();
-      init_storage2();
-      init_toasts();
-      init_assets();
-    }
-  });
-
-  // src/core/ui/settings/pages/Plugins/sheets/VdPluginInfoActionSheet.tsx
-  var VdPluginInfoActionSheet_exports = {};
-  __export(VdPluginInfoActionSheet_exports, {
-    default: () => PluginInfoActionSheet2
-  });
-  function PluginInfoActionSheet2({ plugin, navigation: navigation2 }) {
-    plugin.usePluginState();
-    var vdPlugin = VdPluginManager.plugins[plugin.id];
-    var SettingsComponent = plugin.getPluginSettingsComponent();
-    return /* @__PURE__ */ jsx(ActionSheet, {
-      children: /* @__PURE__ */ jsxs(import_react_native24.ScrollView, {
-        children: [
-          /* @__PURE__ */ jsxs(import_react_native24.View, {
-            style: {
-              flexDirection: "row",
-              alignItems: "center",
-              paddingVertical: 24
-            },
-            children: [
-              /* @__PURE__ */ jsx(Text, {
-                variant: "heading-xl/semibold",
-                children: plugin.name
-              }),
-              /* @__PURE__ */ jsx(import_react_native24.View, {
-                style: {
-                  marginLeft: "auto"
-                },
-                children: SettingsComponent && /* @__PURE__ */ jsx(Button, {
-                  size: "md",
-                  text: "Configure",
-                  variant: "secondary",
-                  icon: findAssetId("WrenchIcon"),
-                  onPress: () => {
-                    hideSheet("PluginInfoActionSheet");
-                    navigation2.push("BUNNY_CUSTOM_PAGE", {
-                      title: plugin.name,
-                      render: SettingsComponent
-                    });
-                  }
-                })
-              })
-            ]
-          }),
-          /* @__PURE__ */ jsxs(ActionSheetRow.Group, {
-            children: [
-              /* @__PURE__ */ jsx(ActionSheetRow, {
-                label: Strings.REFETCH,
-                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                  source: findAssetId("RetryIcon")
-                }),
-                onPress: /* @__PURE__ */ _async_to_generator(function* () {
-                  if (vdPlugin.enabled)
-                    VdPluginManager.stopPlugin(plugin.id, false);
-                  try {
-                    yield VdPluginManager.fetchPlugin(plugin.id);
-                    showToast(Strings.PLUGIN_REFETCH_SUCCESSFUL, findAssetId("toast_image_saved"));
-                  } catch (e) {
-                    showToast(Strings.PLUGIN_REFETCH_FAILED, findAssetId("Small"));
-                  }
-                  if (vdPlugin.enabled)
-                    yield VdPluginManager.startPlugin(plugin.id);
-                  hideSheet("PluginInfoActionSheet");
-                })
-              }),
-              /* @__PURE__ */ jsx(ActionSheetRow, {
-                label: Strings.COPY_URL,
-                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                  source: findAssetId("LinkIcon")
-                }),
-                onPress: () => {
-                  clipboard.setString(plugin.id);
-                  showToast.showCopyToClipboard();
-                }
-              }),
-              /* @__PURE__ */ jsx(ActionSheetRow, {
-                label: vdPlugin.update ? Strings.DISABLE_UPDATES : Strings.ENABLE_UPDATES,
-                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                  source: findAssetId("DownloadIcon")
-                }),
-                onPress: () => {
-                  vdPlugin.update = !vdPlugin.update;
-                  showToast(formatString("TOASTS_PLUGIN_UPDATE", {
-                    update: vdPlugin.update,
-                    name: plugin.name
-                  }), findAssetId("toast_image_saved"));
-                }
-              }),
-              /* @__PURE__ */ jsx(ActionSheetRow, {
-                label: Strings.CLEAR_DATA,
-                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                  variant: "danger",
-                  source: findAssetId("CopyIcon")
-                }),
-                variant: "danger",
-                onPress: () => showConfirmationAlert({
-                  title: Strings.HOLD_UP,
-                  content: formatString("ARE_YOU_SURE_TO_CLEAR_DATA", {
-                    name: plugin.name
-                  }),
-                  confirmText: Strings.CLEAR,
-                  cancelText: Strings.CANCEL,
-                  confirmColor: "red",
-                  onConfirm: /* @__PURE__ */ _async_to_generator(function* () {
-                    if (vdPlugin.enabled)
-                      VdPluginManager.stopPlugin(plugin.id, false);
-                    try {
-                      yield VdPluginManager.fetchPlugin(plugin.id);
-                      showToast(Strings.PLUGIN_REFETCH_SUCCESSFUL, findAssetId("toast_image_saved"));
-                    } catch (e) {
-                      showToast(Strings.PLUGIN_REFETCH_FAILED, findAssetId("Small"));
-                    }
-                    var message;
-                    try {
-                      purgeStorage(plugin.id);
-                      message = [
-                        "CLEAR_DATA_SUCCESSFUL",
-                        "trash"
-                      ];
-                    } catch (e) {
-                      message = [
-                        "CLEAR_DATA_FAILED",
-                        "Small"
-                      ];
-                    }
-                    showToast(formatString(message[0], {
-                      name: plugin.name
-                    }), findAssetId(message[1]));
-                    if (vdPlugin.enabled)
-                      yield VdPluginManager.startPlugin(plugin.id);
-                    hideSheet("PluginInfoActionSheet");
-                  })
-                })
-              }),
-              /* @__PURE__ */ jsx(ActionSheetRow, {
-                label: Strings.DELETE,
-                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
-                  variant: "danger",
-                  source: findAssetId("TrashIcon")
-                }),
-                variant: "danger",
-                onPress: () => showConfirmationAlert({
-                  title: Strings.HOLD_UP,
-                  content: formatString("ARE_YOU_SURE_TO_DELETE_PLUGIN", {
-                    name: plugin.name
-                  }),
-                  confirmText: Strings.DELETE,
-                  cancelText: Strings.CANCEL,
-                  confirmColor: "red",
-                  onConfirm: () => {
-                    try {
-                      VdPluginManager.removePlugin(plugin.id);
-                    } catch (e) {
-                      showToast(String(e), findAssetId("Small"));
-                    }
-                    hideSheet("PluginInfoActionSheet");
-                  }
-                })
-              })
-            ]
-          })
-        ]
-      })
-    });
-  }
-  var import_react_native24;
-  var init_VdPluginInfoActionSheet = __esm({
-    "src/core/ui/settings/pages/Plugins/sheets/VdPluginInfoActionSheet.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_async_to_generator();
-      init_jsxRuntime();
-      init_i18n();
-      init_alerts2();
-      init_plugins();
-      init_storage();
-      init_assets();
-      init_common();
-      init_components();
-      init_sheets();
-      init_toasts();
-      import_react_native24 = __toESM(require_react_native());
-    }
-  });
-
-  // src/core/ui/settings/pages/Plugins/models/vendetta.ts
-  function unifyVdPlugin(vdPlugin) {
-    return {
-      id: vdPlugin.id,
-      name: vdPlugin.manifest.name,
-      description: vdPlugin.manifest.description,
-      authors: vdPlugin.manifest.authors,
-      icon: vdPlugin.manifest.vendetta?.icon,
-      getBadges() {
-        return [];
-      },
-      isEnabled: () => vdPlugin.enabled,
-      isInstalled: () => Boolean(vdPlugin && VdPluginManager.plugins[vdPlugin.id]),
-      usePluginState() {
-        useProxy(VdPluginManager.plugins[vdPlugin.id]);
-      },
-      toggle(start) {
-        start ? VdPluginManager.startPlugin(vdPlugin.id) : VdPluginManager.stopPlugin(vdPlugin.id);
-      },
-      resolveSheetComponent() {
-        return Promise.resolve().then(() => (init_VdPluginInfoActionSheet(), VdPluginInfoActionSheet_exports));
-      },
-      getPluginSettingsComponent() {
-        return VdPluginManager.getSettings(vdPlugin.id);
-      }
-    };
-  }
-  var init_vendetta = __esm({
-    "src/core/ui/settings/pages/Plugins/models/vendetta.ts"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_plugins();
-      init_storage();
-    }
-  });
-
-  // src/core/ui/settings/pages/Plugins/index.tsx
-  var Plugins_exports = {};
-  __export(Plugins_exports, {
-    default: () => Plugins
-  });
-  function PluginPage(props) {
-    var items = props.useItems();
-    return /* @__PURE__ */ jsx(AddonPage, {
-      CardComponent: PluginCard,
-      title: Strings.PLUGINS,
-      searchKeywords: [
-        "name",
-        "description",
-        (p) => p.authors?.map((a) => typeof a === "string" ? a : a.name).join() || ""
-      ],
-      sortOptions: {
-        "Name (A-Z)": (a, b3) => a.name.localeCompare(b3.name),
-        "Name (Z-A)": (a, b3) => b3.name.localeCompare(a.name)
-      },
-      safeModeHint: {
-        message: Strings.SAFE_MODE_NOTICE_PLUGINS
-      },
-      items,
-      ...props
-    });
-  }
-  function PluginsList() {
-    var navigation2 = NavigationNative.useNavigation();
-    return /* @__PURE__ */ jsx(PluginPage, {
-      useItems: () => {
-        useProxy(VdPluginManager.plugins);
-        useObservable([
-          pluginSettings
-        ]);
-        var vdPlugins = Object.values(VdPluginManager.plugins).map(unifyVdPlugin);
-        var bnPlugins = [
-          ...registeredPlugins.values()
-        ].filter((p) => isPluginInstalled(p.id) && !isCorePlugin(p.id)).map(unifyBunnyPlugin);
-        return [
-          ...vdPlugins,
-          ...bnPlugins
-        ];
-      },
-      ListHeaderComponent: () => {
-        var unproxiedPlugins = Object.values(VdPluginManager.plugins).filter((p) => !p.id.startsWith(VD_PROXY_PREFIX) && !p.id.startsWith(BUNNY_PROXY_PREFIX));
-        if (!unproxiedPlugins.length)
-          return null;
-        return /* @__PURE__ */ jsx(import_react_native25.View, {
-          style: {
-            marginVertical: 12,
-            marginHorizontal: 10
-          },
-          children: /* @__PURE__ */ jsx(Card, {
-            border: "strong",
-            children: /* @__PURE__ */ jsxs(import_react_native25.View, {
-              style: {
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-                flexDirection: "row"
-              },
-              children: [
-                /* @__PURE__ */ jsxs(import_react_native25.View, {
-                  style: {
-                    gap: 6,
-                    flexShrink: 1
-                  },
-                  children: [
-                    /* @__PURE__ */ jsx(Text, {
-                      variant: "heading-md/bold",
-                      children: "Unproxied Plugins Found"
-                    }),
-                    /* @__PURE__ */ jsx(Text, {
-                      variant: "text-sm/medium",
-                      color: "text-muted",
-                      children: "Plugins installed from unproxied sources may run unverified code in this app without your awareness."
-                    })
-                  ]
-                }),
-                /* @__PURE__ */ jsx(import_react_native25.View, {
-                  style: {
-                    marginLeft: "auto"
-                  },
-                  children: /* @__PURE__ */ jsx(IconButton, {
-                    size: "sm",
-                    variant: "secondary",
-                    icon: findAssetId("CircleInformationIcon-primary"),
-                    style: {
-                      marginLeft: 8
-                    },
-                    onPress: () => {
-                      navigation2.push("BUNNY_CUSTOM_PAGE", {
-                        title: "Unproxied Plugins",
-                        render: () => {
-                          return /* @__PURE__ */ jsx(FlashList, {
-                            data: unproxiedPlugins,
-                            contentContainerStyle: {
-                              padding: 8
-                            },
-                            ItemSeparatorComponent: () => /* @__PURE__ */ jsx(import_react_native25.View, {
-                              style: {
-                                height: 8
-                              }
-                            }),
-                            renderItem: ({ item: p }) => /* @__PURE__ */ jsx(Card, {
-                              children: /* @__PURE__ */ jsx(Text, {
-                                variant: "heading-md/semibold",
-                                children: p.id
-                              })
-                            })
-                          });
-                        }
-                      });
-                    }
-                  })
-                })
-              ]
-            })
-          })
-        });
-      },
-      ListFooterComponent: () => false,
-      installAction: {
-        label: "Install a plugin",
-        fetchFn: /* @__PURE__ */ function() {
-          var _ref = _async_to_generator(function* (url2) {
-            if (!url2.startsWith(VD_PROXY_PREFIX) && !url2.startsWith(BUNNY_PROXY_PREFIX) && !settings.developerSettings) {
-              openAlert2("bunny-plugin-unproxied-confirmation", /* @__PURE__ */ jsx(AlertModal3, {
-                title: "Hold On!",
-                content: "You're trying to install a plugin from an unproxied external source. This means you're trusting the creator to run their code in this app without your knowledge. Are you sure you want to continue?",
-                extraContent: /* @__PURE__ */ jsx(Card, {
-                  children: /* @__PURE__ */ jsx(Text, {
-                    variant: "text-md/bold",
-                    children: url2
-                  })
-                }),
-                actions: /* @__PURE__ */ jsxs(AlertActions2, {
-                  children: [
-                    /* @__PURE__ */ jsx(AlertActionButton3, {
-                      text: "Continue",
-                      variant: "primary",
-                      onPress: () => {
-                        VdPluginManager.installPlugin(url2).then(() => showToast(Strings.TOASTS_INSTALLED_PLUGIN, findAssetId("Check"))).catch((e) => openAlert2("bunny-plugin-install-failed", /* @__PURE__ */ jsx(AlertModal3, {
-                          title: "Install Failed",
-                          content: `Unable to install plugin from '${url2}':`,
-                          extraContent: /* @__PURE__ */ jsx(Card, {
-                            children: /* @__PURE__ */ jsx(Text, {
-                              variant: "text-md/normal",
-                              children: e instanceof Error ? e.message : String(e)
-                            })
-                          }),
-                          actions: /* @__PURE__ */ jsx(AlertActionButton3, {
-                            text: "Okay",
-                            variant: "primary"
-                          })
-                        })));
-                      }
-                    }),
-                    /* @__PURE__ */ jsx(AlertActionButton3, {
-                      text: "Cancel",
-                      variant: "secondary"
-                    })
-                  ]
-                })
-              }));
-            } else {
-              return yield VdPluginManager.installPlugin(url2);
-            }
-          });
-          return function(url2) {
-            return _ref.apply(this, arguments);
-          };
-        }()
-      }
-    });
-  }
-  function ThemesList() {
-    useProxy(themes);
-    return /* @__PURE__ */ jsx(AddonPage, {
-      title: Strings.THEMES,
-      searchKeywords: [
-        "data.name",
-        "data.description",
-        (p) => p.data.authors?.map((a) => a.name).join(", ") ?? ""
-      ],
-      sortOptions: {
-        "Name (A-Z)": (a, b3) => a.data.name.localeCompare(b3.data.name),
-        "Name (Z-A)": (a, b3) => b3.data.name.localeCompare(a.data.name)
-      },
-      installAction: {
-        label: "Install a theme",
-        fetchFn: installTheme
-      },
-      items: Object.values(themes),
-      safeModeHint: {
-        message: formatString("SAFE_MODE_NOTICE_THEMES", {
-          enabled: Boolean(settings.safeMode?.currentThemeId)
-        }),
-        footer: settings.safeMode?.currentThemeId && /* @__PURE__ */ jsx(Button, {
-          size: "small",
-          text: Strings.DISABLE_THEME,
-          onPress: () => delete settings.safeMode?.currentThemeId,
-          style: {
-            marginTop: 8
-          }
-        })
-      },
-      CardComponent: ThemeCard
-    });
-  }
-  function ThemesOptionsSheet() {
-    useObservable([
-      colorsPref
-    ]);
-    return /* @__PURE__ */ jsxs(ActionSheet, {
-      children: [
-        /* @__PURE__ */ jsx(BottomSheetTitleHeader, {
-          title: "Options"
-        }),
-        /* @__PURE__ */ jsxs(import_react_native25.View, {
-          style: {
-            paddingVertical: 20,
-            gap: 12
-          },
-          children: [
-            /* @__PURE__ */ jsxs(TableRadioGroup, {
-              title: "Override Theme Type",
-              value: colorsPref.type ?? "auto",
-              hasIcons: true,
-              onChange: (type) => {
-                colorsPref.type = type !== "auto" ? type : void 0;
-                getCurrentTheme()?.data && updateBunnyColor(getCurrentTheme().data, {
-                  update: true
-                });
-              },
-              children: [
-                /* @__PURE__ */ jsx(TableRadioRow, {
-                  icon: /* @__PURE__ */ jsx(TableRowIcon, {
-                    source: findAssetId("RobotIcon")
-                  }),
-                  label: "Auto",
-                  value: "auto"
-                }),
-                /* @__PURE__ */ jsx(TableRadioRow, {
-                  icon: /* @__PURE__ */ jsx(TableRowIcon, {
-                    source: findAssetId("ThemeDarkIcon")
-                  }),
-                  label: "Dark",
-                  value: "dark"
-                }),
-                /* @__PURE__ */ jsx(TableRadioRow, {
-                  icon: /* @__PURE__ */ jsx(TableRowIcon, {
-                    source: findAssetId("ThemeLightIcon")
-                  }),
-                  label: "Light",
-                  value: "light"
-                })
-              ]
-            }),
-            /* @__PURE__ */ jsxs(TableRadioGroup, {
-              title: "Chat Background",
-              value: colorsPref.customBackground ?? "shown",
-              hasIcons: true,
-              onChange: (type) => {
-                colorsPref.customBackground = type !== "shown" ? type : null;
-              },
-              children: [
-                /* @__PURE__ */ jsx(TableRadioRow, {
-                  icon: /* @__PURE__ */ jsx(TableRowIcon, {
-                    source: findAssetId("ImageIcon")
-                  }),
-                  label: "Show",
-                  value: "shown"
-                }),
-                /* @__PURE__ */ jsx(TableRadioRow, {
-                  icon: /* @__PURE__ */ jsx(TableRowIcon, {
-                    source: findAssetId("DenyIcon")
-                  }),
-                  label: "Hide",
-                  value: "hidden"
-                })
-              ]
-            })
-          ]
-        })
-      ]
-    });
-  }
-  function Plugins() {
-    useProxy(settings);
-    var showThemes = isThemeSupported();
-    var [selectedTab, setSelectedTab] = (0, import_react6.useState)(0);
-    var navigation2 = NavigationNative.useNavigation();
-    (0, import_react6.useEffect)(() => {
-      navigation2.setOptions({
-        title: !showThemes || selectedTab === 0 ? Strings.PLUGINS : Strings.THEMES,
-        headerRight: showThemes && selectedTab === 1 ? () => /* @__PURE__ */ jsx(IconButton, {
-          size: "sm",
-          variant: "secondary",
-          icon: findAssetId("MoreHorizontalIcon"),
-          onPress: () => showSheet("AddonMoreSheet", ThemesOptionsSheet)
-        }) : void 0
-      });
-    }, [
-      selectedTab,
-      showThemes,
-      navigation2
-    ]);
-    if (!showThemes) {
-      return /* @__PURE__ */ jsx(PluginsList, {});
-    }
-    return /* @__PURE__ */ jsxs(import_react_native25.View, {
-      style: {
-        flex: 1
-      },
-      children: [
-        /* @__PURE__ */ jsxs(import_react_native25.View, {
-          style: {
-            flexDirection: "row",
-            gap: 12,
-            paddingHorizontal: 12,
-            paddingTop: 10,
-            paddingBottom: 6
-          },
-          children: [
-            /* @__PURE__ */ jsx(Button, {
-              size: "sm",
-              variant: selectedTab === 0 ? "primary" : "secondary",
-              text: Strings.PLUGINS,
-              onPress: () => setSelectedTab(0),
-              style: {
-                flex: 1
-              }
-            }),
-            /* @__PURE__ */ jsx(Button, {
-              size: "sm",
-              variant: selectedTab === 1 ? "primary" : "secondary",
-              text: Strings.THEMES,
-              onPress: () => setSelectedTab(1),
-              style: {
-                flex: 1
-              }
-            })
-          ]
-        }),
-        selectedTab === 0 ? /* @__PURE__ */ jsx(PluginsList, {}) : /* @__PURE__ */ jsx(ThemesList, {})
-      ]
-    });
-  }
-  var import_react6, import_react_native25, openAlert2, AlertModal3, AlertActions2, AlertActionButton3;
-  var init_Plugins = __esm({
-    "src/core/ui/settings/pages/Plugins/index.tsx"() {
-      "use strict";
-      init_asyncIteratorSymbol();
-      init_promiseAllSettled();
-      init_async_to_generator();
-      init_jsxRuntime();
-      init_i18n();
-      init_AddonPage();
-      init_PluginCard();
-      init_ThemeCard();
-      init_plugins();
-      init_storage();
-      init_plugins4();
-      init_themes();
-      init_preferences();
-      init_updater();
-      init_assets();
-      init_loader();
-      init_settings();
-      init_storage2();
-      init_sheets();
-      init_toasts();
-      init_constants();
-      init_lazy();
-      init_metro();
-      init_common();
-      init_components();
-      import_react6 = __toESM(require_react());
-      import_react_native25 = __toESM(require_react_native());
-      init_bunny();
-      init_vendetta();
-      ({ openAlert: openAlert2 } = lazyDestructure(() => findByProps("openAlert", "dismissAlert")));
-      ({ AlertModal: AlertModal3, AlertActions: AlertActions2, AlertActionButton: AlertActionButton3 } = lazyDestructure(() => findByProps("AlertModal", "AlertActions")));
-    }
-  });
-
   // src/lib/addons/fonts/index.ts
   var fonts_exports = {};
   __export(fonts_exports, {
@@ -10556,9 +9739,9 @@
   function RevengeFontsExtractor({ fonts: fonts2, setName }) {
     var currentTheme = getCurrentTheme().data;
     var themeFonts = currentTheme.fonts;
-    var [fontName, setFontName] = (0, import_react7.useState)(guessFontName(Object.values(themeFonts)));
-    var [error, setError] = (0, import_react7.useState)(void 0);
-    return /* @__PURE__ */ jsxs(import_react_native26.View, {
+    var [fontName, setFontName] = (0, import_react6.useState)(guessFontName(Object.values(themeFonts)));
+    var [error, setError] = (0, import_react6.useState)(void 0);
+    return /* @__PURE__ */ jsxs(import_react_native22.View, {
       style: {
         padding: 8,
         paddingBottom: 16,
@@ -10608,10 +9791,10 @@
     });
   }
   function JsonFontImporter({ fonts: fonts2, setName, setSource }) {
-    var [fontLink, setFontLink] = (0, import_react7.useState)("");
-    var [saving, setSaving] = (0, import_react7.useState)(false);
-    var [error, setError] = (0, import_react7.useState)(void 0);
-    return /* @__PURE__ */ jsxs(import_react_native26.View, {
+    var [fontLink, setFontLink] = (0, import_react6.useState)("");
+    var [saving, setSaving] = (0, import_react6.useState)(false);
+    var [error, setError] = (0, import_react6.useState)(void 0);
+    return /* @__PURE__ */ jsxs(import_react_native22.View, {
       style: {
         padding: 8,
         paddingBottom: 16,
@@ -10652,9 +9835,9 @@
     });
   }
   function EntryEditorActionSheet(props) {
-    var [familyName, setFamilyName] = (0, import_react7.useState)(props.name);
-    var [fontUrl, setFontUrl] = (0, import_react7.useState)(props.fontEntries[props.name]);
-    return /* @__PURE__ */ jsxs(import_react_native26.View, {
+    var [familyName, setFamilyName] = (0, import_react6.useState)(props.name);
+    var [fontUrl, setFontUrl] = (0, import_react6.useState)(props.fontEntries[props.name]);
+    return /* @__PURE__ */ jsxs(import_react_native22.View, {
       style: {
         padding: 8,
         paddingBottom: 16,
@@ -10706,18 +9889,18 @@
     }), "FontEditorActionSheet");
   }
   function NewEntryRow({ fontEntry }) {
-    var nameRef = (0, import_react7.useRef)();
-    var urlRef = (0, import_react7.useRef)();
-    var [nameSet, setNameSet] = (0, import_react7.useState)(false);
-    var [error, setError] = (0, import_react7.useState)();
-    return /* @__PURE__ */ jsxs(import_react_native26.View, {
+    var nameRef = (0, import_react6.useRef)();
+    var urlRef = (0, import_react6.useRef)();
+    var [nameSet, setNameSet] = (0, import_react6.useState)(false);
+    var [error, setError] = (0, import_react6.useState)();
+    return /* @__PURE__ */ jsxs(import_react_native22.View, {
       style: {
         flexDirection: "row",
         gap: 8,
         justifyContent: "flex-start"
       },
       children: [
-        /* @__PURE__ */ jsx(import_react_native26.View, {
+        /* @__PURE__ */ jsx(import_react_native22.View, {
           style: {
             flex: 1
           },
@@ -10771,10 +9954,10 @@
     });
   }
   function FontEditor(props) {
-    var [name, setName] = (0, import_react7.useState)(props.name);
-    var [source, setSource] = (0, import_react7.useState)();
-    var [importing, setIsImporting] = (0, import_react7.useState)(false);
-    var memoEntry = (0, import_react7.useMemo)(() => {
+    var [name, setName] = (0, import_react6.useState)(props.name);
+    var [source, setSource] = (0, import_react6.useState)();
+    var [importing, setIsImporting] = (0, import_react6.useState)(false);
+    var memoEntry = (0, import_react6.useMemo)(() => {
       return createProxy(props.name ? {
         ...fonts[props.name].main
       } : {}).proxy;
@@ -10783,7 +9966,7 @@
     ]);
     var fontEntries = useProxy(memoEntry);
     var navigation2 = NavigationNative.useNavigation();
-    return /* @__PURE__ */ jsx(import_react_native26.ScrollView, {
+    return /* @__PURE__ */ jsx(import_react_native22.ScrollView, {
       style: {
         flex: 1
       },
@@ -10892,7 +10075,7 @@
               })
             ]
           }),
-          /* @__PURE__ */ jsx(import_react_native26.View, {
+          /* @__PURE__ */ jsx(import_react_native22.View, {
             style: {
               flexDirection: "row",
               justifyContent: "flex-end",
@@ -10936,7 +10119,7 @@
       })
     });
   }
-  var import_react7, import_react_native26, actionSheet2;
+  var import_react6, import_react_native22, actionSheet2;
   var init_FontEditor = __esm({
     "src/core/ui/settings/pages/Fonts/FontEditor.tsx"() {
       "use strict";
@@ -10954,8 +10137,8 @@
       init_components();
       init_wrappers();
       init_components2();
-      import_react7 = __toESM(require_react());
-      import_react_native26 = __toESM(require_react_native());
+      import_react6 = __toESM(require_react());
+      import_react_native22 = __toESM(require_react_native());
       actionSheet2 = findByPropsLazy("hideActionSheet");
     }
   });
@@ -10975,7 +10158,7 @@
     var { fontFamily: fontFamilyList, fontSize } = TextStyleSheet["text-md/medium"];
     var fontFamily = fontFamilyList.split(/,/g)[0];
     var typeface = Skia.useFont(font.main[fontFamily])?.getTypeface();
-    var paragraph = (0, import_react8.useMemo)(() => {
+    var paragraph = (0, import_react7.useMemo)(() => {
       if (!typeface)
         return null;
       var fMgr = SkiaApi.TypefaceFontProvider.Make();
@@ -10992,7 +10175,7 @@
     ]);
     return (
       // This does not work, actually :woeis:
-      /* @__PURE__ */ jsx(import_react_native27.View, {
+      /* @__PURE__ */ jsx(import_react_native23.View, {
         style: {
           height: 64
         },
@@ -11006,7 +10189,7 @@
             y: 0,
             width: 300
           })
-        }) : /* @__PURE__ */ jsx(import_react_native27.View, {
+        }) : /* @__PURE__ */ jsx(import_react_native23.View, {
           style: {
             justifyContent: "center",
             alignItems: "center"
@@ -11028,19 +10211,19 @@
       children: /* @__PURE__ */ jsxs(Stack, {
         spacing: 16,
         children: [
-          /* @__PURE__ */ jsxs(import_react_native27.View, {
+          /* @__PURE__ */ jsxs(import_react_native23.View, {
             style: {
               flexDirection: "row",
               alignItems: "center"
             },
             children: [
-              /* @__PURE__ */ jsx(import_react_native27.View, {
+              /* @__PURE__ */ jsx(import_react_native23.View, {
                 children: /* @__PURE__ */ jsx(Text, {
                   variant: "heading-lg/semibold",
                   children: font.name
                 })
               }),
-              /* @__PURE__ */ jsx(import_react_native27.View, {
+              /* @__PURE__ */ jsx(import_react_native23.View, {
                 style: {
                   marginLeft: "auto"
                 },
@@ -11090,7 +10273,7 @@
       })
     });
   }
-  var Skia, import_react8, import_react_native27, useToken2;
+  var Skia, import_react7, import_react_native23, useToken2;
   var init_FontCard = __esm({
     "src/core/ui/settings/pages/Fonts/FontCard.tsx"() {
       "use strict";
@@ -11110,8 +10293,8 @@
       init_components();
       Skia = __toESM(require_react_native_skia());
       init_styles();
-      import_react8 = __toESM(require_react());
-      import_react_native27 = __toESM(require_react_native());
+      import_react7 = __toESM(require_react());
+      import_react_native23 = __toESM(require_react_native());
       init_FontEditor();
       ({ useToken: useToken2 } = lazyDestructure(() => findByProps("useToken")));
     }
@@ -11166,6 +10349,930 @@
       init_settings();
       init_common();
       init_FontCard();
+    }
+  });
+
+  // src/metro/common/stores.ts
+  var UserStore;
+  var init_stores = __esm({
+    "src/metro/common/stores.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_wrappers();
+      UserStore = findByStoreNameLazy("UserStore");
+    }
+  });
+
+  // src/core/ui/settings/pages/Plugins/sheets/TitleComponent.tsx
+  function TitleComponent({ plugin }) {
+    var users = FluxUtils.useStateFromStoresArray([
+      UserStore
+    ], () => {
+      plugin.authors?.forEach((a) => a.id && maybeFetchUser(a.id));
+      return plugin.authors?.map((a) => UserStore.getUser(a.id));
+    });
+    var { authors } = plugin;
+    var authorTextNode = [];
+    if (authors) {
+      var _loop2 = function(author2) {
+        authorTextNode.push(/* @__PURE__ */ jsx(Text, {
+          onPress: () => showUserProfileActionSheet({
+            userId: author2.id
+          }),
+          variant: "text-md/medium",
+          children: author2.name
+        }));
+        authorTextNode.push(", ");
+      };
+      for (var author of authors)
+        _loop2(author);
+      authorTextNode.pop();
+    }
+    return /* @__PURE__ */ jsxs(import_react_native24.View, {
+      style: {
+        gap: 4
+      },
+      children: [
+        /* @__PURE__ */ jsx(import_react_native24.View, {
+          children: /* @__PURE__ */ jsx(Text, {
+            variant: "heading-xl/semibold",
+            children: plugin.name
+          })
+        }),
+        /* @__PURE__ */ jsx(import_react_native24.View, {
+          style: {
+            flexDirection: "row",
+            flexShrink: 1
+          },
+          children: authors?.length && /* @__PURE__ */ jsxs(import_react_native24.View, {
+            style: {
+              flexDirection: "row",
+              gap: 8,
+              alignItems: "center",
+              paddingVertical: 4,
+              paddingHorizontal: 8,
+              backgroundColor: "#00000016",
+              borderRadius: 32
+            },
+            children: [
+              users.length && /* @__PURE__ */ jsx(AvatarPile, {
+                size: "xxsmall",
+                names: plugin.authors?.map((a) => a.name),
+                totalCount: plugin.authors?.length,
+                children: users.map((a) => /* @__PURE__ */ jsx(Avatar, {
+                  size: "xxsmall",
+                  user: a
+                }))
+              }),
+              /* @__PURE__ */ jsx(Text, {
+                variant: "text-md/medium",
+                children: authorTextNode
+              })
+            ]
+          })
+        })
+      ]
+    });
+  }
+  var import_react_native24, showUserProfileActionSheet, maybeFetchUser;
+  var init_TitleComponent = __esm({
+    "src/core/ui/settings/pages/Plugins/sheets/TitleComponent.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_jsxRuntime();
+      init_lazy();
+      init_metro();
+      init_common();
+      init_components();
+      init_stores();
+      import_react_native24 = __toESM(require_react_native());
+      showUserProfileActionSheet = findByNameLazy("showUserProfileActionSheet");
+      ({ getUser: maybeFetchUser } = lazyDestructure(() => findByProps("getUser", "fetchProfile")));
+    }
+  });
+
+  // src/core/ui/settings/pages/Plugins/sheets/PluginInfoActionSheet.tsx
+  var PluginInfoActionSheet_exports = {};
+  __export(PluginInfoActionSheet_exports, {
+    default: () => PluginInfoActionSheet
+  });
+  function PluginInfoIconButton(props) {
+    var { onPress } = props;
+    props.onPress &&= () => {
+      hideSheet("PluginInfoActionSheet");
+      onPress?.();
+    };
+    return /* @__PURE__ */ jsx(IconButton, {
+      ...props
+    });
+  }
+  function PluginInfoActionSheet({ plugin, navigation: navigation2 }) {
+    plugin.usePluginState();
+    return /* @__PURE__ */ jsx(ActionSheet, {
+      children: /* @__PURE__ */ jsxs(import_react_native25.ScrollView, {
+        contentContainerStyle: {
+          gap: 12,
+          marginBottom: 12
+        },
+        children: [
+          /* @__PURE__ */ jsxs(import_react_native25.View, {
+            style: {
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 8,
+              paddingVertical: 24,
+              justifyContent: "space-between",
+              width: "100%"
+            },
+            children: [
+              /* @__PURE__ */ jsx(TitleComponent, {
+                plugin
+              }),
+              /* @__PURE__ */ jsx(ContextMenu, {
+                items: [
+                  {
+                    label: "Details",
+                    iconSource: findAssetId("CircleInformationIcon-primary"),
+                    action: () => {
+                    }
+                  },
+                  // {
+                  //     label: true ? "Disable Updates" : "Enable Updates",
+                  //     iconSource: true ? findAssetId("ClockXIcon") : findAssetId("ClockIcon"),
+                  //     action: () => {
+                  //     }
+                  // },
+                  {
+                    label: "Clear Data",
+                    iconSource: findAssetId("FileIcon"),
+                    variant: "destructive",
+                    action: () => {
+                    }
+                  },
+                  {
+                    label: "Uninstall",
+                    iconSource: findAssetId("TrashIcon"),
+                    variant: "destructive",
+                    action: () => {
+                    }
+                  }
+                ],
+                children: (props) => /* @__PURE__ */ jsx(IconButton, {
+                  ...props,
+                  icon: findAssetId("MoreHorizontalIcon"),
+                  variant: "secondary",
+                  size: "sm"
+                })
+              })
+            ]
+          }),
+          /* @__PURE__ */ jsxs(import_react_native25.View, {
+            style: {
+              flexDirection: "row",
+              justifyContent: "space-around",
+              alignContent: "center"
+            },
+            children: [
+              /* @__PURE__ */ jsx(PluginInfoIconButton, {
+                label: "Configure",
+                variant: "secondary",
+                disabled: !plugin.getPluginSettingsComponent(),
+                icon: findAssetId("WrenchIcon"),
+                onPress: () => {
+                  navigation2.push("BUNNY_CUSTOM_PAGE", {
+                    title: plugin.name,
+                    render: plugin.getPluginSettingsComponent()
+                  });
+                }
+              }),
+              /* @__PURE__ */ jsx(PluginInfoIconButton, {
+                label: "Refetch",
+                variant: "secondary",
+                icon: findAssetId("RetryIcon"),
+                onPress: () => {
+                  startPlugin(plugin.id);
+                }
+              }),
+              /* @__PURE__ */ jsx(PluginInfoIconButton, {
+                label: "Copy URL",
+                variant: "secondary",
+                icon: findAssetId("LinkIcon"),
+                onPress: () => {
+                }
+              })
+            ]
+          }),
+          /* @__PURE__ */ jsxs(Card, {
+            children: [
+              /* @__PURE__ */ jsx(Text, {
+                variant: "text-md/semibold",
+                color: "text-primary",
+                style: {
+                  marginBottom: 4
+                },
+                children: "Description"
+              }),
+              /* @__PURE__ */ jsx(Text, {
+                variant: "text-md/medium",
+                children: plugin.description
+              })
+            ]
+          })
+        ]
+      })
+    });
+  }
+  var import_react_native25;
+  var init_PluginInfoActionSheet = __esm({
+    "src/core/ui/settings/pages/Plugins/sheets/PluginInfoActionSheet.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_jsxRuntime();
+      init_plugins4();
+      init_assets();
+      init_sheets();
+      init_components();
+      import_react_native25 = __toESM(require_react_native());
+      init_TitleComponent();
+    }
+  });
+
+  // src/core/ui/settings/pages/Plugins/models/bunny.ts
+  function unifyBunnyPlugin(manifest) {
+    return {
+      id: manifest.id,
+      name: manifest.display.name,
+      description: manifest.display.description,
+      authors: manifest.display.authors,
+      getBadges() {
+        return [
+          {
+            source: {
+              uri: OptiLogo_default
+            }
+          }
+        ];
+      },
+      isEnabled: () => isPluginEnabled(manifest.id),
+      isInstalled: () => manifest.id in pluginSettings,
+      usePluginState() {
+        useObservable([
+          pluginSettings
+        ]);
+      },
+      toggle(start) {
+        try {
+          start ? enablePlugin(manifest.id, true) : disablePlugin(manifest.id);
+        } catch (e) {
+          console.error(e);
+          showToast("Failed to toggle plugin " + e, findAssetId("Small"));
+        }
+      },
+      resolveSheetComponent() {
+        return Promise.resolve().then(() => (init_PluginInfoActionSheet(), PluginInfoActionSheet_exports));
+      },
+      getPluginSettingsComponent() {
+        return getPluginSettingsComponent(manifest.id);
+      }
+    };
+  }
+  var init_bunny = __esm({
+    "src/core/ui/settings/pages/Plugins/models/bunny.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_settings3();
+      init_plugins4();
+      init_storage2();
+      init_toasts();
+      init_assets();
+    }
+  });
+
+  // src/core/ui/settings/pages/Plugins/sheets/VdPluginInfoActionSheet.tsx
+  var VdPluginInfoActionSheet_exports = {};
+  __export(VdPluginInfoActionSheet_exports, {
+    default: () => PluginInfoActionSheet2
+  });
+  function PluginInfoActionSheet2({ plugin, navigation: navigation2 }) {
+    plugin.usePluginState();
+    var vdPlugin = VdPluginManager.plugins[plugin.id];
+    var SettingsComponent = plugin.getPluginSettingsComponent();
+    return /* @__PURE__ */ jsx(ActionSheet, {
+      children: /* @__PURE__ */ jsxs(import_react_native26.ScrollView, {
+        children: [
+          /* @__PURE__ */ jsxs(import_react_native26.View, {
+            style: {
+              flexDirection: "row",
+              alignItems: "center",
+              paddingVertical: 24
+            },
+            children: [
+              /* @__PURE__ */ jsx(Text, {
+                variant: "heading-xl/semibold",
+                children: plugin.name
+              }),
+              /* @__PURE__ */ jsx(import_react_native26.View, {
+                style: {
+                  marginLeft: "auto"
+                },
+                children: SettingsComponent && /* @__PURE__ */ jsx(Button, {
+                  size: "md",
+                  text: "Configure",
+                  variant: "secondary",
+                  icon: findAssetId("WrenchIcon"),
+                  onPress: () => {
+                    hideSheet("PluginInfoActionSheet");
+                    navigation2.push("BUNNY_CUSTOM_PAGE", {
+                      title: plugin.name,
+                      render: SettingsComponent
+                    });
+                  }
+                })
+              })
+            ]
+          }),
+          /* @__PURE__ */ jsxs(ActionSheetRow.Group, {
+            children: [
+              /* @__PURE__ */ jsx(ActionSheetRow, {
+                label: Strings.REFETCH,
+                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                  source: findAssetId("RetryIcon")
+                }),
+                onPress: /* @__PURE__ */ _async_to_generator(function* () {
+                  if (vdPlugin.enabled)
+                    VdPluginManager.stopPlugin(plugin.id, false);
+                  try {
+                    yield VdPluginManager.fetchPlugin(plugin.id);
+                    showToast(Strings.PLUGIN_REFETCH_SUCCESSFUL, findAssetId("toast_image_saved"));
+                  } catch (e) {
+                    showToast(Strings.PLUGIN_REFETCH_FAILED, findAssetId("Small"));
+                  }
+                  if (vdPlugin.enabled)
+                    yield VdPluginManager.startPlugin(plugin.id);
+                  hideSheet("PluginInfoActionSheet");
+                })
+              }),
+              /* @__PURE__ */ jsx(ActionSheetRow, {
+                label: Strings.COPY_URL,
+                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                  source: findAssetId("LinkIcon")
+                }),
+                onPress: () => {
+                  clipboard.setString(plugin.id);
+                  showToast.showCopyToClipboard();
+                }
+              }),
+              /* @__PURE__ */ jsx(ActionSheetRow, {
+                label: vdPlugin.update ? Strings.DISABLE_UPDATES : Strings.ENABLE_UPDATES,
+                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                  source: findAssetId("DownloadIcon")
+                }),
+                onPress: () => {
+                  vdPlugin.update = !vdPlugin.update;
+                  showToast(formatString("TOASTS_PLUGIN_UPDATE", {
+                    update: vdPlugin.update,
+                    name: plugin.name
+                  }), findAssetId("toast_image_saved"));
+                }
+              }),
+              /* @__PURE__ */ jsx(ActionSheetRow, {
+                label: Strings.CLEAR_DATA,
+                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                  variant: "danger",
+                  source: findAssetId("CopyIcon")
+                }),
+                variant: "danger",
+                onPress: () => showConfirmationAlert({
+                  title: Strings.HOLD_UP,
+                  content: formatString("ARE_YOU_SURE_TO_CLEAR_DATA", {
+                    name: plugin.name
+                  }),
+                  confirmText: Strings.CLEAR,
+                  cancelText: Strings.CANCEL,
+                  confirmColor: "red",
+                  onConfirm: /* @__PURE__ */ _async_to_generator(function* () {
+                    if (vdPlugin.enabled)
+                      VdPluginManager.stopPlugin(plugin.id, false);
+                    try {
+                      yield VdPluginManager.fetchPlugin(plugin.id);
+                      showToast(Strings.PLUGIN_REFETCH_SUCCESSFUL, findAssetId("toast_image_saved"));
+                    } catch (e) {
+                      showToast(Strings.PLUGIN_REFETCH_FAILED, findAssetId("Small"));
+                    }
+                    var message;
+                    try {
+                      purgeStorage(plugin.id);
+                      message = [
+                        "CLEAR_DATA_SUCCESSFUL",
+                        "trash"
+                      ];
+                    } catch (e) {
+                      message = [
+                        "CLEAR_DATA_FAILED",
+                        "Small"
+                      ];
+                    }
+                    showToast(formatString(message[0], {
+                      name: plugin.name
+                    }), findAssetId(message[1]));
+                    if (vdPlugin.enabled)
+                      yield VdPluginManager.startPlugin(plugin.id);
+                    hideSheet("PluginInfoActionSheet");
+                  })
+                })
+              }),
+              /* @__PURE__ */ jsx(ActionSheetRow, {
+                label: Strings.DELETE,
+                icon: /* @__PURE__ */ jsx(TableRow.Icon, {
+                  variant: "danger",
+                  source: findAssetId("TrashIcon")
+                }),
+                variant: "danger",
+                onPress: () => showConfirmationAlert({
+                  title: Strings.HOLD_UP,
+                  content: formatString("ARE_YOU_SURE_TO_DELETE_PLUGIN", {
+                    name: plugin.name
+                  }),
+                  confirmText: Strings.DELETE,
+                  cancelText: Strings.CANCEL,
+                  confirmColor: "red",
+                  onConfirm: () => {
+                    try {
+                      VdPluginManager.removePlugin(plugin.id);
+                    } catch (e) {
+                      showToast(String(e), findAssetId("Small"));
+                    }
+                    hideSheet("PluginInfoActionSheet");
+                  }
+                })
+              })
+            ]
+          })
+        ]
+      })
+    });
+  }
+  var import_react_native26;
+  var init_VdPluginInfoActionSheet = __esm({
+    "src/core/ui/settings/pages/Plugins/sheets/VdPluginInfoActionSheet.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_async_to_generator();
+      init_jsxRuntime();
+      init_i18n();
+      init_alerts2();
+      init_plugins();
+      init_storage();
+      init_assets();
+      init_common();
+      init_components();
+      init_sheets();
+      init_toasts();
+      import_react_native26 = __toESM(require_react_native());
+    }
+  });
+
+  // src/core/ui/settings/pages/Plugins/models/vendetta.ts
+  function unifyVdPlugin(vdPlugin) {
+    return {
+      id: vdPlugin.id,
+      name: vdPlugin.manifest.name,
+      description: vdPlugin.manifest.description,
+      authors: vdPlugin.manifest.authors,
+      icon: vdPlugin.manifest.vendetta?.icon,
+      getBadges() {
+        return [];
+      },
+      isEnabled: () => vdPlugin.enabled,
+      isInstalled: () => Boolean(vdPlugin && VdPluginManager.plugins[vdPlugin.id]),
+      usePluginState() {
+        useProxy(VdPluginManager.plugins[vdPlugin.id]);
+      },
+      toggle(start) {
+        start ? VdPluginManager.startPlugin(vdPlugin.id) : VdPluginManager.stopPlugin(vdPlugin.id);
+      },
+      resolveSheetComponent() {
+        return Promise.resolve().then(() => (init_VdPluginInfoActionSheet(), VdPluginInfoActionSheet_exports));
+      },
+      getPluginSettingsComponent() {
+        return VdPluginManager.getSettings(vdPlugin.id);
+      }
+    };
+  }
+  var init_vendetta = __esm({
+    "src/core/ui/settings/pages/Plugins/models/vendetta.ts"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_plugins();
+      init_storage();
+    }
+  });
+
+  // src/core/ui/settings/pages/Plugins/index.tsx
+  var Plugins_exports = {};
+  __export(Plugins_exports, {
+    default: () => Plugins
+  });
+  function PluginPage(props) {
+    var items = props.useItems();
+    return /* @__PURE__ */ jsx(AddonPage, {
+      CardComponent: PluginCard,
+      title: Strings.PLUGINS,
+      searchKeywords: [
+        "name",
+        "description",
+        (p) => p.authors?.map((a) => typeof a === "string" ? a : a.name).join() || ""
+      ],
+      sortOptions: {
+        "Name (A-Z)": (a, b3) => a.name.localeCompare(b3.name),
+        "Name (Z-A)": (a, b3) => b3.name.localeCompare(a.name)
+      },
+      safeModeHint: {
+        message: Strings.SAFE_MODE_NOTICE_PLUGINS
+      },
+      items,
+      ...props
+    });
+  }
+  function PluginsList() {
+    var navigation2 = NavigationNative.useNavigation();
+    return /* @__PURE__ */ jsx(PluginPage, {
+      useItems: () => {
+        useProxy(VdPluginManager.plugins);
+        useObservable([
+          pluginSettings
+        ]);
+        var vdPlugins = Object.values(VdPluginManager.plugins).map(unifyVdPlugin);
+        var bnPlugins = [
+          ...registeredPlugins.values()
+        ].filter((p) => isPluginInstalled(p.id) && !isCorePlugin(p.id)).map(unifyBunnyPlugin);
+        return [
+          ...vdPlugins,
+          ...bnPlugins
+        ];
+      },
+      ListHeaderComponent: () => {
+        var unproxiedPlugins = Object.values(VdPluginManager.plugins).filter((p) => !p.id.startsWith(VD_PROXY_PREFIX) && !p.id.startsWith(BUNNY_PROXY_PREFIX));
+        if (!unproxiedPlugins.length)
+          return null;
+        return /* @__PURE__ */ jsx(import_react_native27.View, {
+          style: {
+            marginVertical: 12,
+            marginHorizontal: 10
+          },
+          children: /* @__PURE__ */ jsx(Card, {
+            border: "strong",
+            children: /* @__PURE__ */ jsxs(import_react_native27.View, {
+              style: {
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "row"
+              },
+              children: [
+                /* @__PURE__ */ jsxs(import_react_native27.View, {
+                  style: {
+                    gap: 6,
+                    flexShrink: 1
+                  },
+                  children: [
+                    /* @__PURE__ */ jsx(Text, {
+                      variant: "heading-md/bold",
+                      children: "Unproxied Plugins Found"
+                    }),
+                    /* @__PURE__ */ jsx(Text, {
+                      variant: "text-sm/medium",
+                      color: "text-muted",
+                      children: "Plugins installed from unproxied sources may run unverified code in this app without your awareness."
+                    })
+                  ]
+                }),
+                /* @__PURE__ */ jsx(import_react_native27.View, {
+                  style: {
+                    marginLeft: "auto"
+                  },
+                  children: /* @__PURE__ */ jsx(IconButton, {
+                    size: "sm",
+                    variant: "secondary",
+                    icon: findAssetId("CircleInformationIcon-primary"),
+                    style: {
+                      marginLeft: 8
+                    },
+                    onPress: () => {
+                      navigation2.push("BUNNY_CUSTOM_PAGE", {
+                        title: "Unproxied Plugins",
+                        render: () => {
+                          return /* @__PURE__ */ jsx(FlashList, {
+                            data: unproxiedPlugins,
+                            contentContainerStyle: {
+                              padding: 8
+                            },
+                            ItemSeparatorComponent: () => /* @__PURE__ */ jsx(import_react_native27.View, {
+                              style: {
+                                height: 8
+                              }
+                            }),
+                            renderItem: ({ item: p }) => /* @__PURE__ */ jsx(Card, {
+                              children: /* @__PURE__ */ jsx(Text, {
+                                variant: "heading-md/semibold",
+                                children: p.id
+                              })
+                            })
+                          });
+                        }
+                      });
+                    }
+                  })
+                })
+              ]
+            })
+          })
+        });
+      },
+      installAction: {
+        label: "Install a plugin",
+        fetchFn: /* @__PURE__ */ function() {
+          var _ref = _async_to_generator(function* (url2) {
+            if (!url2.startsWith(VD_PROXY_PREFIX) && !url2.startsWith(BUNNY_PROXY_PREFIX) && !settings.developerSettings) {
+              openAlert2("bunny-plugin-unproxied-confirmation", /* @__PURE__ */ jsx(AlertModal3, {
+                title: "Hold On!",
+                content: "You're trying to install a plugin from an unproxied external source. This means you're trusting the creator to run their code in this app without your knowledge. Are you sure you want to continue?",
+                extraContent: /* @__PURE__ */ jsx(Card, {
+                  children: /* @__PURE__ */ jsx(Text, {
+                    variant: "text-md/bold",
+                    children: url2
+                  })
+                }),
+                actions: /* @__PURE__ */ jsxs(AlertActions2, {
+                  children: [
+                    /* @__PURE__ */ jsx(AlertActionButton3, {
+                      text: "Continue",
+                      variant: "primary",
+                      onPress: () => {
+                        VdPluginManager.installPlugin(url2).then(() => showToast(Strings.TOASTS_INSTALLED_PLUGIN, findAssetId("Check"))).catch((e) => openAlert2("bunny-plugin-install-failed", /* @__PURE__ */ jsx(AlertModal3, {
+                          title: "Install Failed",
+                          content: `Unable to install plugin from '${url2}':`,
+                          extraContent: /* @__PURE__ */ jsx(Card, {
+                            children: /* @__PURE__ */ jsx(Text, {
+                              variant: "text-md/normal",
+                              children: e instanceof Error ? e.message : String(e)
+                            })
+                          }),
+                          actions: /* @__PURE__ */ jsx(AlertActionButton3, {
+                            text: "Okay",
+                            variant: "primary"
+                          })
+                        })));
+                      }
+                    }),
+                    /* @__PURE__ */ jsx(AlertActionButton3, {
+                      text: "Cancel",
+                      variant: "secondary"
+                    })
+                  ]
+                })
+              }));
+            } else {
+              return yield VdPluginManager.installPlugin(url2);
+            }
+          });
+          return function(url2) {
+            return _ref.apply(this, arguments);
+          };
+        }()
+      }
+    });
+  }
+  function ThemesList() {
+    useProxy(themes);
+    return /* @__PURE__ */ jsx(AddonPage, {
+      title: Strings.THEMES,
+      searchKeywords: [
+        "data.name",
+        "data.description",
+        (p) => p.data.authors?.map((a) => a.name).join(", ") ?? ""
+      ],
+      sortOptions: {
+        "Name (A-Z)": (a, b3) => a.data.name.localeCompare(b3.data.name),
+        "Name (Z-A)": (a, b3) => b3.data.name.localeCompare(a.data.name)
+      },
+      installAction: {
+        label: "Install a theme",
+        fetchFn: installTheme
+      },
+      items: Object.values(themes),
+      safeModeHint: {
+        message: formatString("SAFE_MODE_NOTICE_THEMES", {
+          enabled: Boolean(settings.safeMode?.currentThemeId)
+        }),
+        footer: settings.safeMode?.currentThemeId && /* @__PURE__ */ jsx(Button, {
+          size: "small",
+          text: Strings.DISABLE_THEME,
+          onPress: () => delete settings.safeMode?.currentThemeId,
+          style: {
+            marginTop: 8
+          }
+        })
+      },
+      CardComponent: ThemeCard
+    });
+  }
+  function ThemesOptionsSheet() {
+    useObservable([
+      colorsPref
+    ]);
+    return /* @__PURE__ */ jsxs(ActionSheet, {
+      children: [
+        /* @__PURE__ */ jsx(BottomSheetTitleHeader, {
+          title: "Options"
+        }),
+        /* @__PURE__ */ jsxs(import_react_native27.View, {
+          style: {
+            paddingVertical: 20,
+            gap: 12
+          },
+          children: [
+            /* @__PURE__ */ jsxs(TableRadioGroup, {
+              title: "Override Theme Type",
+              value: colorsPref.type ?? "auto",
+              hasIcons: true,
+              onChange: (type) => {
+                colorsPref.type = type !== "auto" ? type : void 0;
+                getCurrentTheme()?.data && updateBunnyColor(getCurrentTheme().data, {
+                  update: true
+                });
+              },
+              children: [
+                /* @__PURE__ */ jsx(TableRadioRow, {
+                  icon: /* @__PURE__ */ jsx(TableRowIcon, {
+                    source: findAssetId("RobotIcon")
+                  }),
+                  label: "Auto",
+                  value: "auto"
+                }),
+                /* @__PURE__ */ jsx(TableRadioRow, {
+                  icon: /* @__PURE__ */ jsx(TableRowIcon, {
+                    source: findAssetId("ThemeDarkIcon")
+                  }),
+                  label: "Dark",
+                  value: "dark"
+                }),
+                /* @__PURE__ */ jsx(TableRadioRow, {
+                  icon: /* @__PURE__ */ jsx(TableRowIcon, {
+                    source: findAssetId("ThemeLightIcon")
+                  }),
+                  label: "Light",
+                  value: "light"
+                })
+              ]
+            }),
+            /* @__PURE__ */ jsxs(TableRadioGroup, {
+              title: "Chat Background",
+              value: colorsPref.customBackground ?? "shown",
+              hasIcons: true,
+              onChange: (type) => {
+                colorsPref.customBackground = type !== "shown" ? type : null;
+              },
+              children: [
+                /* @__PURE__ */ jsx(TableRadioRow, {
+                  icon: /* @__PURE__ */ jsx(TableRowIcon, {
+                    source: findAssetId("ImageIcon")
+                  }),
+                  label: "Show",
+                  value: "shown"
+                }),
+                /* @__PURE__ */ jsx(TableRadioRow, {
+                  icon: /* @__PURE__ */ jsx(TableRowIcon, {
+                    source: findAssetId("DenyIcon")
+                  }),
+                  label: "Hide",
+                  value: "hidden"
+                })
+              ]
+            })
+          ]
+        })
+      ]
+    });
+  }
+  function Plugins() {
+    useProxy(settings);
+    var showThemes = isThemeSupported();
+    var showFonts = isFontSupported();
+    var [selectedTab, setSelectedTab] = (0, import_react8.useState)(0);
+    var navigation2 = NavigationNative.useNavigation();
+    var tabs = [
+      {
+        key: "plugins",
+        label: Strings.PLUGINS,
+        component: /* @__PURE__ */ jsx(PluginsList, {})
+      }
+    ];
+    if (showThemes) {
+      tabs.push({
+        key: "themes",
+        label: Strings.THEMES,
+        component: /* @__PURE__ */ jsx(ThemesList, {})
+      });
+    }
+    if (showFonts) {
+      tabs.push({
+        key: "fonts",
+        label: Strings.FONTS,
+        component: /* @__PURE__ */ jsx(Fonts, {})
+      });
+    }
+    var currentTab = tabs[selectedTab] || tabs[0];
+    var currentTabLabel = currentTab.label;
+    var currentTabKey = currentTab.key;
+    (0, import_react8.useEffect)(() => {
+      navigation2.setOptions({
+        title: currentTabLabel,
+        headerRight: currentTabKey === "themes" ? () => /* @__PURE__ */ jsx(IconButton, {
+          size: "sm",
+          variant: "secondary",
+          icon: findAssetId("MoreHorizontalIcon"),
+          onPress: () => showSheet("AddonMoreSheet", ThemesOptionsSheet)
+        }) : void 0
+      });
+    }, [
+      selectedTab,
+      currentTabLabel,
+      currentTabKey,
+      navigation2
+    ]);
+    if (tabs.length === 1) {
+      return tabs[0].component;
+    }
+    return /* @__PURE__ */ jsxs(import_react_native27.View, {
+      style: {
+        flex: 1
+      },
+      children: [
+        /* @__PURE__ */ jsx(import_react_native27.View, {
+          style: {
+            flexDirection: "row",
+            gap: 12,
+            paddingHorizontal: 12,
+            paddingTop: 10,
+            paddingBottom: 6
+          },
+          children: tabs.map((tab, idx) => /* @__PURE__ */ jsx(Button, {
+            size: "sm",
+            variant: selectedTab === idx ? "primary" : "secondary",
+            text: tab.label,
+            onPress: () => setSelectedTab(idx),
+            style: {
+              flex: 1
+            }
+          }, tab.key))
+        }),
+        currentTab.component
+      ]
+    });
+  }
+  var import_react8, import_react_native27, openAlert2, AlertModal3, AlertActions2, AlertActionButton3;
+  var init_Plugins = __esm({
+    "src/core/ui/settings/pages/Plugins/index.tsx"() {
+      "use strict";
+      init_asyncIteratorSymbol();
+      init_promiseAllSettled();
+      init_async_to_generator();
+      init_jsxRuntime();
+      init_i18n();
+      init_AddonPage();
+      init_PluginCard();
+      init_ThemeCard();
+      init_plugins();
+      init_storage();
+      init_plugins4();
+      init_themes();
+      init_preferences();
+      init_updater();
+      init_assets();
+      init_loader();
+      init_settings();
+      init_storage2();
+      init_sheets();
+      init_toasts();
+      init_constants();
+      init_lazy();
+      init_metro();
+      init_common();
+      init_components();
+      init_Fonts();
+      import_react8 = __toESM(require_react());
+      import_react_native27 = __toESM(require_react_native());
+      init_bunny();
+      init_vendetta();
+      ({ openAlert: openAlert2 } = lazyDestructure(() => findByProps("openAlert", "dismissAlert")));
+      ({ AlertModal: AlertModal3, AlertActions: AlertActions2, AlertActionButton: AlertActionButton3 } = lazyDestructure(() => findByProps("AlertModal", "AlertActions")));
     }
   });
 
@@ -15286,7 +15393,7 @@
             uri: OptiLogo_default
           },
           render: () => Promise.resolve().then(() => (init_General(), General_exports)),
-          useTrailing: () => `(${"0c5313f-main"})`
+          useTrailing: () => `(${"9137a43-main"})`
         },
         {
           key: "BUNNY_PLUGINS",
@@ -15782,7 +15889,7 @@
         alert([
           "Failed to load Opti!\n",
           `Build Number: ${ClientInfoManager.Build}`,
-          `Opti: ${"0c5313f-main"}`,
+          `Opti: ${"9137a43-main"}`,
           stack || e?.toString?.()
         ].join("\n"));
       }
