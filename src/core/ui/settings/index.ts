@@ -14,24 +14,17 @@ export default function initSettings() {
         name: "Opti",
         items: [
             {
-                key: "BUNNY",
+                key: "OPTI",
                 title: () => Strings.BUNNY,
                 icon: { uri: PyoncordIcon },
                 render: () => import("@core/ui/settings/pages/General"),
                 useTrailing: () => `(${version})`
             },
             {
-                key: "BUNNY_PLUGINS",
+                key: "OPTI_ADDONS",
                 title: () => `${Strings.PLUGINS}`,
                 icon: findAssetId("ActivitiesIcon"),
                 render: () => import("@core/ui/settings/pages/Plugins")
-            },
-            {
-                key: "BUNNY_FONTS",
-                title: () => Strings.FONTS,
-                icon: findAssetId("ic_add_text"),
-                render: () => import("@core/ui/settings/pages/Fonts"),
-                usePredicate: () => isFontSupported()
             },
             {
                 key: "OPTI_ADDON_HUB",
@@ -40,7 +33,7 @@ export default function initSettings() {
                 render: () => import("@core/ui/settings/pages/Addons")
             },
             {
-                key: "BUNNY_DEVELOPER",
+                key: "OPTI_DEVELOPER",
                 title: () => Strings.DEVELOPER,
                 icon: findAssetId("WrenchIcon"),
                 render: () => import("@core/ui/settings/pages/Developer"),

@@ -12,6 +12,7 @@ export const getCorePlugins = (): Record<string, CorePlugin> => ({
     "bunny.tenorchanger": require("./tenorchanger")
 });
 
+
 /**
  * @internal
  */

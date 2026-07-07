@@ -1,5 +1,5 @@
 # Opti
-An optimized Discord mobile experience. A fork of [Bunny](https://github.com/vendetta-mod/Vendetta/).
+An *opti*mized Discord mobile experience. A fork of [Bunny](https://github.com/bunny-mod/Bunny/).
 
 ## Installing
 
@@ -7,11 +7,12 @@ An optimized Discord mobile experience. A fork of [Bunny](https://github.com/ven
 
 - **Root** with Xposed - [OptiXposed](https://github.com/Opti-mod/OptiXposed/releases/latest)
 - **Non-root** - [OptiManager](https://github.com/Opti-mod/OptiManager/releases/latest)
+- **Sideloading** - Sideload with another client using the following URL:  https://raw.githubusercontent.com/Opti-mod/Opti/refs/heads/main/dist/bunny.js 
 
 ### iOS
-- [**BunnyTweak**](https://github.com/pyoncord/BunnyTweak) - Get prebuilt rootful and rootless `.deb` files or the prepatched `.ipa `
+- [**OptiTweak**](https://github.com/Opti-mod/OptiTweak) - Get prebuilt rootful and rootless `.deb` files or the prepatched `.ipa `
 
-- **Enmity Sideloading** - Sideload with the following URL:  https://raw.githubusercontent.com/Opti-mod/Opti/refs/heads/main/dist/bunny.js 
+- **Sideloading** - Sideload with another client using the following URL:  https://raw.githubusercontent.com/Opti-mod/Opti/refs/heads/main/dist/bunny.js 
 
 ## Building
 1. Install an Opti loader with loader config support (any mentioned in the [Installing](#installing) section).

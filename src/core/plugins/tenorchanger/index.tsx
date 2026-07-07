@@ -1,69 +1,8 @@
 import { instead } from "@lib/api/patcher";
-import { findByStoreNameLazy } from "@metro";
+import { findByPropsLazy } from "@metro";
 import { defineCorePlugin } from "..";
 
-// might only work on later versions who knows
-const EXPERIMENT_ID = "2025-10-gif-providers-multi-treatment";
 let patches = [] as (() => void)[];
-
-function patchStore(store: any) {
-  const context = store[Symbol.for("bunny.metro.lazyContext")];
-  if (!context) return;
-
-  const unsub = context.getExports((resolvedStore: any) => {
-    if (!resolvedStore) return;
-
-    if (typeof resolvedStore.getUserExperimentDescriptor === "function") {
-      patches.push(
-        instead("getUserExperimentDescriptor", resolvedStore, (args, original) => {
-          const [experimentId] = args;
-          if (experimentId === EXPERIMENT_ID) {
-            return {
-              type: "user",
-              bucket: 2, // Variant 2 = Klipy, Variant 1 = Giphy
-              revision: 1,
-              id: EXPERIMENT_ID,
-              override: true,
-            };
-          }
-          return original(...args);
-        })
-      );
-    }
-
-    if (typeof resolvedStore.getGuildExperimentDescriptor === "function") {
-      patches.push(
-        instead("getGuildExperimentDescriptor", resolvedStore, (args, original) => {
-          const [guildId, experimentId] = args;
-          if (experimentId === EXPERIMENT_ID) {
-            return {
-              type: "user",
-              bucket: 2,
-              revision: 1,
-              id: EXPERIMENT_ID,
-              override: true,
-            };
-          }
-          return original(...args);
-        })
-      );
-    }
-
-    if (typeof resolvedStore.getUserExperimentBucket === "function") {
-      patches.push(
-        instead("getUserExperimentBucket", resolvedStore, (args, original) => {
-          const [experimentId] = args;
-          if (experimentId === EXPERIMENT_ID) {
-            return 2;
-          }
-          return original(...args);
-        })
-      );
-    }
-  });
-
-  patches.push(unsub);
-}
 
 export default defineCorePlugin({
   manifest: {
@@ -75,11 +14,28 @@ export default defineCorePlugin({
   },
 
   start() {
-    const ExperimentStore = findByStoreNameLazy("ExperimentStore");
-    const UserExperimentStore = findByStoreNameLazy("UserExperimentStore");
-
-    patchStore(ExperimentStore);
-    patchStore(UserExperimentStore);
+    const HTTP = findByPropsLazy("get", "post", "put");
+    patches.push(
+      instead("get", HTTP, (args, original) => {
+        let req = args[0];
+        if (typeof req === "string") {
+          if (req.includes("/gifs/")) {
+            if (req.includes("provider=")) {
+              req = req.replace(/provider=[^&]+/, "provider=klipy");
+            } else {
+              req = req + (req.includes("?") ? "&" : "?") + "provider=klipy";
+            }
+            args[0] = req;
+          }
+        } else if (req && typeof req === "object") {
+          if (req.url && req.url.includes("/gifs/")) {
+            req.query = req.query || {};
+            req.query.provider = "klipy";
+          }
+        }
+        return original(...args);
+      })
+    );
   },
 
   stop() {
