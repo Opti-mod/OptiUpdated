@@ -10,7 +10,7 @@ import { colorsPref } from "@lib/addons/themes/colors/preferences";
 import { updateBunnyColor } from "@lib/addons/themes/colors/updater";
 import { Author } from "@lib/addons/types";
 import { findAssetId } from "@lib/api/assets";
-import { isThemeSupported } from "@lib/api/native/loader";
+import { isFontSupported, isThemeSupported } from "@lib/api/native/loader";
 import { settings } from "@lib/api/settings";
 import { useObservable } from "@lib/api/storage";
 import { showSheet } from "@lib/ui/sheets";
@@ -20,6 +20,7 @@ import { lazyDestructure } from "@lib/utils/lazy";
 import { findByProps } from "@metro";
 import { NavigationNative } from "@metro/common";
 import { ActionSheet, BottomSheetTitleHeader, Button, Card, FlashList, IconButton, TableRadioGroup, TableRadioRow, TableRowIcon, Text } from "@metro/common/components";
+import Fonts from "@core/ui/settings/pages/Fonts";
 import React, { ComponentProps, useEffect, useState } from "react";
 import { View } from "react-native";
 
@@ -110,7 +111,6 @@ function PluginsList() {
                 </Card>
             </View>;
         }}
-        ListFooterComponent={() => __DEV__}
         installAction={{
             label: "Install a plugin",
             fetchFn: async (url: string) => {
@@ -212,13 +212,28 @@ function ThemesOptionsSheet() {
 export default function Plugins() {
     useProxy(settings);
     const showThemes = isThemeSupported();
+    const showFonts = isFontSupported();
     const [selectedTab, setSelectedTab] = useState(0);
     const navigation = NavigationNative.useNavigation();
 
+    const tabs = [
+        { key: "plugins", label: Strings.PLUGINS, component: <PluginsList /> }
+    ];
+    if (showThemes) {
+        tabs.push({ key: "themes", label: Strings.THEMES, component: <ThemesList /> });
+    }
+    if (showFonts) {
+        tabs.push({ key: "fonts", label: Strings.FONTS, component: <Fonts /> });
+    }
+
+    const currentTab = tabs[selectedTab] || tabs[0];
+    const currentTabLabel = currentTab.label;
+    const currentTabKey = currentTab.key;
+
     useEffect(() => {
         navigation.setOptions({
-            title: !showThemes || selectedTab === 0 ? Strings.PLUGINS : Strings.THEMES,
-            headerRight: showThemes && selectedTab === 1 ? () => (
+            title: currentTabLabel,
+            headerRight: currentTabKey === "themes" ? () => (
                 <IconButton
                     size="sm"
                     variant="secondary"
@@ -227,31 +242,27 @@ export default function Plugins() {
                 />
             ) : undefined
         });
-    }, [selectedTab, showThemes, navigation]);
+    }, [selectedTab, currentTabLabel, currentTabKey, navigation]);
 
-    if (!showThemes) {
-        return <PluginsList />;
+    if (tabs.length === 1) {
+        return tabs[0].component;
     }
 
     return (
         <View style={{ flex: 1 }}>
             <View style={{ flexDirection: "row", gap: 12, paddingHorizontal: 12, paddingTop: 10, paddingBottom: 6 }}>
-                <Button
-                    size="sm"
-                    variant={selectedTab === 0 ? "primary" : "secondary"}
-                    text={Strings.PLUGINS}
-                    onPress={() => setSelectedTab(0)}
-                    style={{ flex: 1 }}
-                />
-                <Button
-                    size="sm"
-                    variant={selectedTab === 1 ? "primary" : "secondary"}
-                    text={Strings.THEMES}
-                    onPress={() => setSelectedTab(1)}
-                    style={{ flex: 1 }}
-                />
+                {tabs.map((tab, idx) => (
+                    <Button
+                        key={tab.key}
+                        size="sm"
+                        variant={selectedTab === idx ? "primary" : "secondary"}
+                        text={tab.label}
+                        onPress={() => setSelectedTab(idx)}
+                        style={{ flex: 1 }}
+                    />
+                ))}
             </View>
-            {selectedTab === 0 ? <PluginsList /> : <ThemesList />}
+            {currentTab.component}
         </View>
     );
 }
