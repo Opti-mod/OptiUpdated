@@ -9,7 +9,7 @@ interface CorePlugin {
 export const getCorePlugins = (): Record<string, CorePlugin> => ({
     "bunny.quickinstall": require("./quickinstall"),
     "bunny.badges": require("./badges"),
-    "bunny.tenorchanger": require("./tenorchanger")
+    "bunny.tenorfix": require("./tenorfix")
 });
 
 

@@ -5,7 +5,7 @@ import { installTheme, removeTheme, themes } from "@lib/addons/themes";
 import { findAssetId } from "@lib/api/assets";
 import { isThemeSupported } from "@lib/api/native/loader";
 import { after } from "@lib/api/patcher";
-import { HTTP_REGEX_MULTI, VD_DISCORD_SERVER_ID, VD_PLUGINS_CHANNEL_ID, VD_PROXY_PREFIX, VD_THEMES_CHANNEL_ID } from "@lib/utils/constants";
+import { HTTP_REGEX_MULTI, VD_PLUGINS_CHANNEL_ID, VD_PROXY_PREFIX, VD_THEMES_CHANNEL_ID } from "@lib/utils/constants";
 import { lazyDestructure } from "@lib/utils/lazy";
 import { Button } from "@metro/common/components";
 import { findByProps, findByPropsLazy } from "@metro/wrappers";
@@ -39,7 +39,11 @@ const postMap = {
 };
 
 function useExtractThreadContent(thread: any, _firstMessage = null, actionSheet = false): ([PostType, string]) | void {
-    if (thread.guild_id !== VD_DISCORD_SERVER_ID) return;
+
+    // I understand why the failsafe is here but for now I believe it should be disabled because, Vendetta is gone...
+
+    // Also I could probably just make a curated list of vverified plugins channels throughout all client mods
+    //  if (thread.guild_id !== VD_DISCORD_SERVER_ID) return;
 
     // Determine what type of addon this is.
     let postType: PostType;
